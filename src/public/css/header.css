@@ -1,0 +1,20 @@
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+.navbar {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.nav-link {
+    font-size: 1rem;
+    margin-left: 1rem;
+}
+@media (max-width: 576px) {
+    .navbar-brand {
+    font-size: 1.2rem;
+    }
+    .nav-link {
+    margin-left: 0;
+    padding: 0.5rem 1rem;
+    }
+}

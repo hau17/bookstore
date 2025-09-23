@@ -1,0 +1,88 @@
+<h2>Quản lý nhà xuất bản</h2> 
+<a href="/admin/publishers/add"><button class="btn btn-primary">Thêm nhà xuất bản</button></a>
+<table id="publisherTable" class="display">
+    <thead>
+        <tr> 
+            <th>ID</th>
+            <th>Tên NXB</th>
+            <th>Địa chỉ</th>
+            <th>Số điện thoại</th>
+            <th>Mô tả</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each publishers}}
+            <tr class="publisher-row" 
+                data-id="{{this.publisher_id}}"
+                data-name="{{this.publisher_name}}"
+                data-address="{{this.address}}"
+                data-phone="{{this.phone_number}}"
+                data-description="{{this.description}}"
+                data-status="{{this.status}}">
+                <td>{{this.publisher_id}}</td>
+                <td>{{this.publisher_name}}</td>
+                <td class="text-truncate" style="max-width: 200px;">{{this.address}}</td>
+                <td>{{this.phone_number}}</td>
+                <td class="text-truncate" style="max-width: 200px;">{{this.description}}</td>
+                <td>{{#if (eq this.status "1")}}Hoạt động{{else}}Ngừng hoạt động{{/if}}</td>
+                <td>
+                    <a href="/admin/publishers/{{this.publisher_id}}/edit">
+                        <button class="btn btn-primary" data-id="{{this.publisher_id}}">Sửa</button>
+                    </a>
+                    <!-- Nút xóa -->
+                    <button class="btn btn-danger"
+                        data-id="{{this.publisher_id}}"
+                        data-name="{{this.publisher_name}}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#delete-modal"
+                        data-type="publishers">Xóa</button>
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{!-- chi tiết nhà xuất bản --}}
+<div class="modal fade" id="modal-publisher-detail-admin" tabindex="-1" aria-labelledby="detailPublisherLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="detailPublisherLabel">Chi tiết nhà xuất bản</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>ID NXB:</strong></label>
+                    <span id="detail-publisher-id"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>Tên NXB:</strong></label>
+                    <span id="detail-publisher-name"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>Địa chỉ:</strong></label>
+                    <span id="detail-publisher-address"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>Số điện thoại:</strong></label>
+                    <span id="detail-publisher-phone"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>Mô tả:</strong></label>
+                    <span id="detail-publisher-description" class="d-block text-pre-wrap text-break"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>Trạng thái:</strong></label>
+                    <span id="detail-publisher-status"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/admin/publisher.js"></script>

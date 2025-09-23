@@ -1,0 +1,16 @@
+<div class="mt-4">
+    <h3>Thêm tác giả</h3>
+    <form method="POST" action="/admin/authors/add">
+        <div class="mb-3">
+            <label class="form-label">Tên tác giả</label>
+            <input type="text" class="form-control" name="author_name" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea class="form-control" name="description" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Thêm tác giả</button>
+    </form>
+</div>

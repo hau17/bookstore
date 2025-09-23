@@ -1,0 +1,65 @@
+<h2>Quản lý khách hàng</h2>
+
+<table id="customerTable" class="display">
+    <thead>
+        <tr> 
+            <th>ID</th>
+            <th>Tên khách hàng</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Ngày tạo</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each customers}}
+            <tr class="customer-row" 
+                data-id="{{this.cus_id}}"
+                data-name="{{this.fullname}}"
+                data-email="{{this.email}}"
+                data-phone="{{this.phone_number}}"
+                data-address="{{this.address}}"
+                data-createdate ="{{this.created_at}}"
+                data-status="{{this.status}}">
+                <td>{{this.cus_id}}</td>
+                <td>{{this.fullname}}</td>
+                <td>{{this.email}}</td>
+                <td>{{this.phone_number}}</td>
+                <td>{{this.address}}</td>
+                <td>
+                    {{formatDate this.created_at}}
+                </td>
+                <td>{{#if (eq this.status 1)}}Đang hoạt động
+                        {{else}}Đã khóa
+                    {{/if}}</td>
+                <td>
+                    {{#if this.status}}
+                <!-- Nếu status = 1 thì hiện nút Khóa -->
+                            <button class="btn btn-warning btn-toggle-status" 
+                                data-id="{{this.cus_id}}"
+                                data-name="{{this.fullname}}"
+                                data-status="{{this.status}}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#toggle-status-modal"
+                                data-type="customers">Khóa
+                            </button>
+                    {{else}}
+                <!-- Nếu status = 0 thì hiện nút Mở khóa -->
+                        <button class="btn btn-success btn-toggle-status" 
+                            data-id="{{this.cus_id}}" 
+                            data-name="{{this.fullname}}"
+                            data-status="{{this.status}}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#toggle-status-modal"
+                            data-type="customers">Mở khóa
+                        </button>
+                    {{/if}}
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<script src="/js/admin/customer.js"></script>

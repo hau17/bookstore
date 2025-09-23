@@ -1,0 +1,166 @@
+<h2>Quản lí sách</h2>
+<a href="/admin/products/add"><button class="btn btn-primary">Thêm sách</button></a>
+
+<!-- Bộ lọc -->
+<div class="mb-3">
+  <label for="product-status-filter" class="form-label">Lọc sản phẩm:</label>
+  <select id="product-status-filter" class="form-select select2">
+    <option value="" {{#unless filter}}selected{{/unless}}>Tất cả</option>
+    <option value="active" {{#if (eq filter 'active')}}selected{{/if}}>Đang bán</option>
+    <option value="inactive" {{#if (eq filter 'inactive')}}selected{{/if}}>Ngừng bán</option>
+  </select>
+</div>
+
+
+
+<table id="myTable" class="display">
+    <thead>
+        <tr> 
+            <th>Tên sách</th>
+            <th>Tác giả</th>
+            <th>Nhà xuất bản</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Phần trăm lợi nhuận</th>
+            <th>Ngày tạo</th>
+            <th>Mô tả</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each products}}
+            <tr class="product__row--click" 
+                data-id="{{this.book_id}}"
+                data-title="{{this.book_title}}"
+                data-author="{{this.author_name}}"
+                data-publisher="{{this.publisher_name}}"
+                data-category="{{this.category_name}}"
+                data-price="{{this.price}}"
+                data-discount="{{this.discount_percentage}}"
+                data-quantity="{{this.stock_quantity}}"
+                data-description="{{this.description}}"
+                data-image="{{this.image_path}}"
+                data-created="{{formatDate this.created_date}}"
+                data-status="{{this.status}}">
+                
+                <!-- Các cột chính -->
+                <td class="text-truncate" style="max-width: 200px;">{{this.book_title}}</td>
+                <td>{{this.author_name}}</td>
+                <td>{{this.publisher_name}}</td>
+                <td>{{this.stock_quantity}}</td>
+                <td>{{this.price}}</td>
+                <td>{{this.discount_percentage}}%</td>
+                <td>{{formatDate this.created_date}}</td>
+                <td class="text-truncate" style="max-width: 200px;">{{this.description}}</td>
+
+                <!-- Cột trạng thái -->
+                <td>
+                    {{#if (eq this.status 1)}}
+                        Đang bán
+                    {{else}}
+                        Ngừng bán
+                    {{/if}}
+                </td>
+
+                <!-- Cột thao tác -->
+                <td class="d-flex gap-1 ">
+                    <a href="/admin/products/{{this.book_id}}/edit">
+                        <button class="btn btn-primary" data-id="{{this.book_id}}">Sửa</button>
+                    </a>
+                    
+                    {{#if (eq this.status 1)}}
+                        <!-- Nếu đang bán thì cho phép Khóa -->
+                        <button class="btn btn-warning btn-toggle-status" 
+                            data-id="{{this.book_id}}"
+                            data-name="{{this.book_title}}"
+                            data-status="{{this.status}}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#toggle-status-modal"
+                            data-type="products">Khóa
+                        </button>
+                    {{else}}
+                        <!-- Nếu đã ngừng bán thì cho phép Mở khóa -->
+                        <button class="btn btn-success btn-toggle-status" 
+                            data-id="{{this.book_id}}"
+                            data-name="{{this.book_title}}"
+                            data-status="{{this.status}}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#toggle-status-modal"
+                            data-type="products">Mở
+                        </button>
+                    {{/if}}
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+
+
+<!-- Modal chi tiết sản phẩm -->
+<div class="modal fade" id="modal-product-detail-admin" tabindex="-1" aria-labelledby="detailProductLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="detailProductLabel">Chi tiết sản phẩm</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="col-form-label"><strong>ID sách:</strong></label>
+          <span id="detail-book-id"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Tên sách:</strong></label>
+          <span id="detail-book-title"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Danh mục:</strong></label>
+          <span id="detail-category"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Tác giả:</strong></label>
+          <span id="detail-author"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Nhà xuất bản:</strong></label>
+          <span id="detail-publisher"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Giá:</strong></label>
+          <span id="detail-price"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Giảm giá (%):</strong></label>
+          <span id="detail-discount"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Số lượng:</strong></label>
+          <span id="detail-quantity"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Mô tả:</strong></label>
+          <span id="detail-description"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Hình ảnh:</strong></label>
+          <img id="detail-image" src="" alt="Hình sách" style="max-width: 200px;">
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Ngày tạo:</strong></label>
+          <span id="detail-created"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Trạng thái:</strong></label>
+          <span id="detail-status"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/admin/product.js"></script>

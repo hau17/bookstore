@@ -1,0 +1,191 @@
+<!-- Bộ lọc -->
+{{!-- <h2 id="order-title">Quản lý đơn hàng</h2> --}}
+
+<!-- Bộ lọc -->
+<div class="mb-3">
+  <label for="admin-order-filter" class="form-label">Lọc đơn hàng:</label>
+  <select id="admin-order-filter" class="form-select select2">
+    <option value="" {{#unless filter}}selected{{/unless}}>Tất cả</option>
+    <option value="undelivered" {{#if (eq filter 'undelivered')}}selected{{/if}}>Chưa giao</option>
+    <option value="delivered" {{#if (eq filter 'delivered')}}selected{{/if}}>Đã giao</option>
+    <option value="cancelled" {{#if (eq filter 'cancelled')}}selected{{/if}}>Bị hủy</option>
+  </select>
+</div>
+
+<!-- Bảng đơn hàng -->
+<table id="admin-order-table" class="display">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Người đặt</th>
+      <th>Ngày đặt</th>
+      <th>Tổng tiền</th>
+      <th>Phương thức</th>
+      <th>Thanh toán</th>
+      <th>Đổi</th>
+      <th>Trạng thái</th>
+      <th>Đổi</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each orders}}
+      <tr class="admin-order-row"
+          data-id="{{this.order_id}}"
+          data-user-name="{{this.fullname}}"
+          data-address="{{this.address}}"
+          data-order-date="{{formatDate this.order_date}}"
+          data-total-amount="{{this.total_amount}}"
+          data-payment-name="{{this.payment_name}}"
+          data-payment-status="{{this.payment_status}}"
+          data-status-name="{{this.status_name}}">
+          
+        <td>{{this.order_id}}</td>
+        <td>{{this.fullname}}</td>
+        <td>{{formatDate this.order_date}}</td>
+        <td>{{this.total_amount}}</td>
+        
+        <!-- Cột phương thức -->
+        <td>{{this.payment_name}}</td>
+        
+        
+        <!-- Cột thanh toán -->
+        <td>
+          {{#if (eq this.payment_status '0')}}Chưa TT{{else}}Đã TT{{/if}}
+        </td>
+        <td>
+          <button class="btn btn-secondary btn-sm"
+                  data-id="{{this.order_id}}"
+                  data-bs-toggle="modal"
+                  data-bs-target="#admin-order-change-payment-status-modal">
+            Đổi
+          </button>
+        </td>
+        <!-- Cột trạng thái đơn hàng -->
+        <td>{{this.status_name}}</td>
+        <td>
+          <button class="btn btn-primary btn-sm"
+                  data-id="{{this.order_id}}"
+                  data-bs-toggle="modal"
+                  data-bs-target="#admin-order-change-status-modal">
+            Đổi
+          </button>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+
+<!-- Modal thay đổi trạng thái đơn hàng -->
+<div class="modal fade" id="admin-order-change-status-modal" tabindex="-1" aria-labelledby="admin-order-change-status-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="admin-order-change-status-label">Thay đổi trạng thái đơn hàng</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="admin-order-change-status-form">
+          <input type="hidden" id="admin-order-id" name="order_id">
+          <div class="mb-3">
+            <label for="admin-order-status-id" class="form-label">Chọn trạng thái</label>
+            <select id="admin-order-status-id" name="status_id" class="form-select">
+              {{#each statuses}}
+                <option value="{{this.status_id}}">{{this.status_name}}</option>
+              {{/each}}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Cập nhật</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- modal thay đổi trạng thái thanh toán đơn hàng --}}
+<div class="modal fade" id="admin-order-change-payment-status-modal" tabindex="-1" aria-labelledby="admin-order-change-payment-status-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="admin-order-change-payment-status-label">Thay đổi trạng thái thanh toán đơn hàng</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="admin-order-change-payment-status-form">
+          <input type="hidden" id="admin-order-payment-status-id" name="order_id">
+          <div class="mb-3">
+            <label for="admin-order-payment-status" class="form-label">Chọn trạng thái thanh toán</label>
+            <select id="admin-order-payment-status" name="payment_status" class="form-select">
+              <li><option value="0">Chưa thanh toán</option></li>
+              <li><option value="1">Đã thanh toán</option></li>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Cập nhật</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal chi tiết đơn hàng -->
+<div class="modal fade" id="admin-order-detail-modal" tabindex="-1" aria-labelledby="admin-order-detail-label" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="admin-order-detail-label">Chi tiết đơn hàng</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="col-form-label"><strong>ID đơn hàng:</strong></label>
+          <span id="admin-order-detail-id"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Người đặt:</strong></label>
+          <span id="admin-order-detail-user-name"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Ngày đặt:</strong></label>
+          <span id="admin-order-detail-order-date"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>địa chỉ nhận hàng:</strong></label>
+          <span id="admin-order-detail-user-address"></span>
+        </div>
+
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Tổng tiền:</strong></label>
+          <span id="admin-order-detail-total-amount"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Phương thức thanh toán:</strong></label>
+          <span id="admin-order-detail-payment-name"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Trạng thái thanh toán:</strong></label>
+          <span id="admin-order-detail-payment-status"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Trạng thái đơn hàng:</strong></label>
+          <span id="admin-order-detail-status-name"></span>
+        </div>
+        <h5>Chi tiết sách</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Tên sách</th>
+              <th>Số lượng</th>
+              <th>Giá</th>
+              <th>Tổng</th>
+            </tr>
+          </thead>
+          <tbody id="admin-order-detail-books"></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/admin/order.js"></script>

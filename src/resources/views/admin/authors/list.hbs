@@ -1,0 +1,66 @@
+<h2>Quản lý tác giả</h2>
+<a href="/admin/authors/add"><button class="btn btn-primary">Thêm tác giả</button></a>
+<table id="authorTable" class="display">
+    <thead>
+        <tr> 
+            <th>ID</th>
+            <th>Tên tác giả</th>
+            <th>Mô tả</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each authors}}
+            <tr class="author-row" 
+                data-id="{{this.author_id}}"
+                data-name="{{this.author_name}}"
+                data-description="{{this.description}}">
+                <td>{{this.author_id}}</td>
+                <td>{{this.author_name}}</td>
+                <td class="text-truncate" style="max-width: 200px;">{{this.description}}</td>
+                <td>
+                    <a href="/admin/authors/{{this.author_id}}/edit">
+                        <button class="btn btn-primary" data-id="{{this.author_id}}">Sửa</button>
+                    </a>
+                    <!-- Nút xóa -->
+                    <button class="btn btn-danger"
+                        data-id="{{this.author_id}}"
+                        data-name="{{this.author_name}}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#delete-modal"
+                        data-type="authors">Xóa</button>
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{!-- chi tiết tác giả --}}
+<div class="modal fade" id="modal-author-detail-admin" tabindex="-1" aria-labelledby="detailAuthorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="detailAuthorLabel">Chi tiết tác giả</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>ID tác giả:</strong></label>
+                    <span id="detail-author-id"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>Tên tác giả:</strong></label>
+                    <span id="detail-author-name"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>Mô tả:</strong></label>
+                    <span id="detail-author-description" class="d-block text-pre-wrap text-break"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/admin/author.js"></script>

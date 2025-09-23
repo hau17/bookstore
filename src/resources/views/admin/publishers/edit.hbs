@@ -1,0 +1,26 @@
+<div class="mt-4">
+    <h3>Sửa nhà xuất bản</h3>
+    <form method="POST" action="/admin/publishers/{{publisher.publisher_id}}/edit?_method=PUT">
+        <div class="mb-3">
+            <label for="publisher_name" class="form-label">Tên nhà xuất bản</label>
+            <input type="text" class="form-control" id="publisher_name" name="publisher_name" required value="{{publisher.publisher_name}}">
+        </div>
+
+        <div class="mb-3">
+            <label for="address" class="form-label">Địa chỉ</label>
+            <input type="text" class="form-control" id="address" name="address" value="{{publisher.address}}">
+        </div>
+
+        <div class="mb-3">
+            <label for="phone_number" class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{publisher.phone_number}}">
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Mô tả</label>
+            <textarea class="form-control" id="description" name="description" rows="3">{{publisher.description}}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+    </form>
+</div>

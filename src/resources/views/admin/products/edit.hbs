@@ -1,0 +1,69 @@
+<div class="mt-4">
+    <h3>Sửa sản phẩm</h3>
+    <form method="POST" action="/admin/products/{{product.book_id}}?_method=PUT" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label">Tên sách</label>
+            <input type="text" class="form-control" name="book_title" required value="{{product.book_title}}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Thể loại</label>
+            <select class="form-select select2" name="category_id" required>
+                <option value="" disabled>-- Chọn thể loại --</option>
+                {{#each categories}}
+                    <option value="{{this.category_id}}" {{#if (eq this.category_id ../product.category_id)}}selected{{/if}}>
+                        {{this.category_name}}
+                    </option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tác giả</label>
+            <select class="form-select select2" name="author_id" required>
+                <option value="" disabled>-- Chọn tác giả --</option>
+                {{#each authors}}
+                    <option value="{{this.author_id}}" {{#if (eq this.author_id ../product.author_id)}}selected{{/if}}>
+                        {{this.author_name}}
+                    </option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Nhà xuất bản</label>
+            <select class="form-select select2" name="publisher_id" required>
+                <option value="" disabled>-- Chọn nhà xuất bản --</option>
+                {{#each publishers}}
+                    <option value="{{this.publisher_id}}" {{#if (eq this.publisher_id ../product.publisher_id)}}selected{{/if}}>
+                        {{this.publisher_name}}
+                    </option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Phần trăm lợi nhuận (%)</label>
+            <input type="number" step="0.01" class="form-control" name="discount_percentage" value="{{product.discount_percentage}}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea class="form-control" name="description" rows="3">{{product.description}}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Hình ảnh</label>
+            <input type="file" class="form-control" name="image_path">
+            {{#if product.image_path}}
+                <div class="mt-2">
+                    <img src="{{product.image_path}}" alt="Current Image" width="500">
+                </div>
+            {{/if}}
+        </div>
+
+        <button type="submit" class="btn btn-success">Cập nhật sản phẩm</button>
+    </form>
+</div>
+
+<script src="/js/admin/product.js"></script>
