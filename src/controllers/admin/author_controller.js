@@ -1,9 +1,17 @@
 const authorService = require('../../services/admin/author_service.js');
 
 exports.list = async (req, res) => {
+  const filter = req.query.filter || '';
+  let title = 'Quản lý tác giả';
+  if (filter === 'active') {
+    title += ' - Đang hoạt động';
+  } else if (filter === 'inactive') {
+    title += ' - Ngừng hoạt động';
+  }
   try {
-    const authors = await authorService.getAll();
-    res.render('admin/authors/list', { authors, layout: 'main-admin', title: 'Quản lý tác giả' });
+    const authors = await authorService.getAll(filter);
+    res.render('admin/authors/list',
+       { authors, layout: 'main-admin', title, filter });
   } catch (err) {
     console.error(err);
     res.status(500).send('Lỗi server');
@@ -96,16 +104,16 @@ exports.update = async (req, res) => {
   }
 };
 
-exports.delete = async (req, res) => {
+exports.toggleStatus = async (req, res) => {
   try {
     const authorId = req.params.id;
-    const affectedRows = await authorService.delete(authorId);
+    const affectedRows = await authorService.toggleStatus(authorId);
     if (affectedRows === 0) {
       return res.status(404).send('Tác giả không tồn tại');
     }
     res.redirect('/admin/authors');
   } catch (error) {
-    console.error('Error deleting author:', error);
-    res.status(500).send('Lỗi server');
+    console.error('Error toggling author status:', error);
+    return res.status(500).json({ error: 'Database update failed: ' + error.message });
   }
 };

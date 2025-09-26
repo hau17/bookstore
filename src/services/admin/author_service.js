@@ -1,14 +1,19 @@
 const db = require('../../config/db.js')
 
-exports.getAll = async () => {
-  const sql = `
+exports.getAll = async (filter) => {
+  let sql = `
     SELECT 
       author_id,
       author_name,
-      description
+      description,
+      status
     FROM authors
-    where status = '1'
   `;
+  if (filter === 'active') {
+    sql += " WHERE status = '1'";
+  } else if (filter === 'inactive') {
+    sql += " WHERE status = '0'";
+  }
   try {
     const [authors] = await db.query(sql);
     return authors;
@@ -60,13 +65,18 @@ exports.update = async (author) => {
   }
 };
 
-exports.delete = async (id) => {
-  const sql = 'UPDATE authors SET status = ? WHERE author_id = ?';
+
+exports.toggleStatus = async (id) => {
+  const sql = `
+    UPDATE authors
+    SET status = CASE WHEN status = '1' THEN '0' ELSE '1' END
+    WHERE author_id = ?
+  `;
   try {
-    const [result] = await db.query(sql, ['0', id]);
+    const [result] = await db.query(sql, [id]);
     return result.affectedRows;
   } catch (error) {
-    console.error('Error deleting author:', error);
-    throw new Error('Database delete failed: ' + error.message);
+    console.error('Error toggling author status:', error);
+    throw new Error('Database update failed: ' + error.message);
   }
 };

@@ -14,6 +14,14 @@ document.addEventListener('DOMContentLoaded', function () {
       }
   });
 
+  //lọc tác giả:
+  // Lọc tác giả
+  $('#author-status-filter').on('change', function () {
+    let value=$(this).val();
+
+    window.location.href = '/admin/authors' + (value ? '?filter=' + value : '');
+  });
+
   // chi tiet tac gia
 const detailModal = document.getElementById('modal-author-detail-admin');
 if (detailModal) {

@@ -3,24 +3,16 @@ const orderService = require('../../services/admin/order_service');
 exports.list = async (req, res) => {
   try {
     const filter = req.query.filter || '';
-    let orders;
-
-    if (filter === 'undelivered') {
-      orders = await orderService.getOrdersByStatus('undelivered');
-    } else if (filter === 'delivered') {
-      orders = await orderService.getOrdersByStatus('delivered');
-    } else if (filter === 'cancelled') {
-      orders = await orderService.getOrdersByStatus('cancelled');
-    } else {
-      orders = await orderService.getAll();
-    }
-
+    const orders = await orderService.getAll(filter);
     const statuses = await orderService.getAllStatuses();
 
     let title = 'Tất cả đơn hàng';
-    if (filter === 'undelivered') title = 'Chưa giao';
+    if (filter === 'preparing') title = 'Đang chuẩn bị hàng';
+    else if (filter === 'delivering') title = 'Đang giao';
     else if (filter === 'delivered') title = 'Đã giao';
     else if (filter === 'cancelled') title = 'Bị hủy';
+    else if (filter === 'waiting') title = 'Chờ xác nhận';
+
     res.render('admin/orders/list', {
       layout: 'main-admin',
       title,
@@ -33,7 +25,6 @@ exports.list = async (req, res) => {
     res.status(500).send('Lỗi server');
   }
 };
-
 
 // Cập nhật trạng thái đơn hàng
 exports.updateStatus = async (req, res) => {

@@ -20,7 +20,6 @@ router.put('/:id/edit', authorController.update);
 // Hiển thị chi tiết tác giả
 router.get('/:id', authorController.getById);
 
-// Xóa tác giả
-router.delete('/:id', authorController.delete);
-
+// khóa/mở khóa tác giả
+router.patch('/:id/status', authorController.toggleStatus);
 module.exports = router;

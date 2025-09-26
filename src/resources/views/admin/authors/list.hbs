@@ -1,11 +1,21 @@
 <h2>Quản lý tác giả</h2>
 <a href="/admin/authors/add"><button class="btn btn-primary">Thêm tác giả</button></a>
+<div class="mb-3">
+  <label for="author-status-filter" class="form-label">Lọc tác giả:</label>
+  <select id="author-status-filter" class="form-select select2">
+    <option value="" {{#unless filter}}selected{{/unless}}>Tất cả</option>
+    <option value="active" {{#if (eq filter 'active')}}selected{{/if}}>Đang hoạt động</option>
+    <option value="inactive" {{#if (eq filter 'inactive')}}selected{{/if}}>Ngừng hoạt động</option>
+  </select>
+</div>
+
 <table id="authorTable" class="display">
     <thead>
         <tr> 
             <th>ID</th>
             <th>Tên tác giả</th>
             <th>Mô tả</th>
+            <th>Trạng thái</th>
             <th>Thao tác</th>
         </tr>
     </thead>
@@ -19,16 +29,39 @@
                 <td>{{this.author_name}}</td>
                 <td class="text-truncate" style="max-width: 200px;">{{this.description}}</td>
                 <td>
+                    {{#if (eq this.status '1')}}
+                        <span >Đang hoạt động</span>
+                    {{else}}
+                        <span >Ngừng hoạt động</span>
+                    {{/if}}
+                </td>
+                <td>
                     <a href="/admin/authors/{{this.author_id}}/edit">
                         <button class="btn btn-primary" data-id="{{this.author_id}}">Sửa</button>
                     </a>
-                    <!-- Nút xóa -->
-                    <button class="btn btn-danger"
+                   {{#if (eq this.status 1)}} 
+                    <!-- Nếu tác giả đang hoạt động thì cho phép Khóa -->
+                    <button class="btn btn-warning btn-toggle-status" 
                         data-id="{{this.author_id}}"
                         data-name="{{this.author_name}}"
+                        data-status="{{this.status}}"
                         data-bs-toggle="modal"
-                        data-bs-target="#delete-modal"
-                        data-type="authors">Xóa</button>
+                        data-bs-target="#toggle-status-modal"
+                        data-type="authors">
+                        Khóa
+                    </button>
+                    {{else}}
+                    <!-- Nếu tác giả đã ngừng hoạt động thì cho phép Mở khóa -->
+                    <button class="btn btn-success btn-toggle-status" 
+                        data-id="{{this.author_id}}"
+                        data-name="{{this.author_name}}"
+                        data-status="{{this.status}}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#toggle-status-modal"
+                        data-type="authors">
+                        Mở
+                    </button>
+                    {{/if}}
                 </td>
             </tr>
         {{/each}}

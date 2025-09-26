@@ -25,13 +25,8 @@ exports.getAll = async (status) => {
     sql += ' WHERE b.status = ?';
   }
   try {
-    if (status !== undefined) {
-      const [products] = await db.query(sql, [status]);
+    const [products] = status !== undefined ? await db.query(sql, [status]) : await db.query(sql);
       return products;
-    } else {
-    const [products] = await db.query(sql);
-    return products;
-    }
   } catch (error) {
     console.error('Error fetching products:', error);
     throw new Error('Database fetch failed: ' + error.message);

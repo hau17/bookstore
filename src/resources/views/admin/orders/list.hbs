@@ -6,7 +6,9 @@
   <label for="admin-order-filter" class="form-label">Lọc đơn hàng:</label>
   <select id="admin-order-filter" class="form-select select2">
     <option value="" {{#unless filter}}selected{{/unless}}>Tất cả</option>
-    <option value="undelivered" {{#if (eq filter 'undelivered')}}selected{{/if}}>Chưa giao</option>
+    <option value="waiting" {{#if (eq filter 'waiting')}}selected{{/if}}>Chờ xác nhận</option>
+    <option value="preparing" {{#if (eq filter 'preparing')}}selected{{/if}}>Đang chuẩn bị hàng</option>
+    <option value="delivering" {{#if (eq filter 'delivering')}}selected{{/if}}>Đang giao</option>
     <option value="delivered" {{#if (eq filter 'delivered')}}selected{{/if}}>Đã giao</option>
     <option value="cancelled" {{#if (eq filter 'cancelled')}}selected{{/if}}>Bị hủy</option>
   </select>

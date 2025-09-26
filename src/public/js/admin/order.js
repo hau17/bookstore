@@ -19,9 +19,11 @@ $('#admin-order-filter').on('change', function () {
   let value = $(this).val();
 
   let title = "Tất cả đơn hàng";
-  if (value === "undelivered") title = "Chưa giao";
+  if (value === "preparing") title = "Đang chuẩn bị hàng";
+  else if (value === "delivering") title = "Đang giao";
   else if (value === "delivered") title = "Đã giao";
   else if (value === "cancelled") title = "Bị hủy";
+  else if (value === "waiting") title = "Chờ xác nhận";
 
   window.location.href = '/admin/orders' + (value ? '?filter=' + value : '');
 });

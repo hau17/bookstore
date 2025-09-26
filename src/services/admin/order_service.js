@@ -19,11 +19,17 @@ exports.getAll = async (filter = '') => {
     JOIN users u ON o.user_id = u.user_id
   `;
   let values = [];
-  
-  if (filter === 'undelivered') {
-    sql += ' WHERE o.status_id IN (1, 2, 3)';
+
+  if (filter === 'preparing') {
+    sql += ' WHERE o.status_id = 2';
+  } else if (filter === 'delivering') {
+    sql += ' WHERE o.status_id = 3';
   } else if (filter === 'delivered') {
     sql += ' WHERE o.status_id = 4';
+  } else if (filter === 'cancelled') {
+    sql += ' WHERE o.status_id = 5';
+  } else if (filter === 'waiting') {
+    sql += ' WHERE o.status_id = 1';
   }
 
   try {
@@ -35,26 +41,6 @@ exports.getAll = async (filter = '') => {
   }
 };
 
-// lọc đơn hàng theo trạng thái
-exports.getOrdersByStatus = async (status) => {
-  if (status === 'undelivered') {
-    const [result] = await db.query(
-      'SELECT * FROM orders WHERE status_id IN (1,2,3)'
-    );
-    return result;
-  } else if (status === 'delivered') {
-    const [result] = await db.query(
-      'SELECT * FROM orders WHERE status_id = ?', [4]
-    );
-    return result;
-  } else if (status === 'cancelled') {
-    const [result] = await db.query(
-      'SELECT * FROM orders WHERE status_id = ?', [5]
-    );
-    return result;
-  }
-  return [];
-};
 
 exports.getOrderDetails = async (orderId) => {
   const sql = `
