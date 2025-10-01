@@ -1,7 +1,7 @@
 const db = require('../../config/db.js');
 
-exports.getAll = async () => {
-  const sql = `
+exports.getAll = async (filter) => {
+  let sql = `
     SELECT 
       publisher_id,
       publisher_name,
@@ -10,11 +10,18 @@ exports.getAll = async () => {
       description,
       status
     FROM publishers
-    WHERE status = '1'
   `;
+
+  if (filter === 'active') {
+    sql += ' WHERE status = 1';
+  } else if (filter === 'inactive') {
+    sql += ' WHERE status = 0';
+  } else {
+    sql += ''; // No filter, get all
+  }
   try {
-    const [publishers] = await db.query(sql);
-    return publishers;
+      const [publishers] = await db.query(sql);
+      return publishers;
   } catch (error) {
     console.error('Error fetching publishers:', error);
     throw new Error('Database fetch failed: ' + error.message);
@@ -85,17 +92,14 @@ exports.update = async (publisher) => {
   }
 };
 
-exports.delete = async (id) => {
-  const sql = `
-    UPDATE publishers
-    SET status = ?
-    WHERE publisher_id = ?
-  `;
+// Cập nhật trạng thái (khóa/mở khóa)
+exports.toggleStatus = async (id) => {
+  const sql = `UPDATE publishers SET status = IF(status = 1, 0, 1) WHERE publisher_id = ?`;
   try {
-    const [result] = await db.query(sql, ['0', id]);
-    return result.affectedRows;
+    const [result] = await db.query(sql, [id]);
+    return result.affectedRows; // Số dòng bị ảnh hưởng
   } catch (error) {
-    console.error('Error deleting publisher:', error);
-    throw new Error('Database delete failed: ' + error.message);
+    console.error('Error toggling publisher status:', error);
+    throw new Error('Database update failed: ' + error.message);
   }
 };

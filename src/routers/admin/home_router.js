@@ -6,7 +6,7 @@ const orderRouter = require('./order_router.js');
 const customerRouter = require('./customer_router.js');
 const homeController = require('../../controllers/admin/home.js');
 const publisherRouter = require('./publisher_router.js');
-
+const categoryRouter = require('./category_router.js');
 
 // Middleware kiểm tra đăng nhập admin
 function checkAdmin(req, res, next) {
@@ -32,6 +32,7 @@ router.use('/authors', checkAdmin, authorRouter);
 router.use('/orders', checkAdmin, orderRouter);
 router.use('/customers', checkAdmin, customerRouter);
 router.use('/publishers', checkAdmin, publisherRouter);
+router.use('/categories', checkAdmin, categoryRouter);
 router.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {

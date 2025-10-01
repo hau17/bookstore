@@ -2,8 +2,12 @@ const publisherService = require('../../services/admin/publisher_service.js');
 
 exports.list = async (req, res) => {
   try {
-    const publishers = await publisherService.getAll();
-    res.render('admin/publishers/list', { publishers, layout: 'main-admin', title: 'Quản lý nhà xuất bản' });
+    const filter = req.query.filter || '';
+    const publishers = await publisherService.getAll(filter);
+    res.render('admin/publishers/list', { 
+      publishers, layout: 'main-admin', 
+      title: 'Quản lý nhà xuất bản' , 
+      filter });
   } catch (err) {
     console.error(err);
     res.status(500).send('Lỗi server');
@@ -102,16 +106,16 @@ exports.update = async (req, res) => {
   }
 };
 
-exports.delete = async (req, res) => {
+exports.toggleStatus = async (req, res) => {
   try {
     const publisherId = req.params.id;
-    const affectedRows = await publisherService.delete(publisherId);
-    if (affectedRows === 0) {
+    const result = await publisherService.toggleStatus(publisherId);
+    if (result.affectedRows === 0) {
       return res.status(404).send('Nhà xuất bản không tồn tại');
     }
     res.redirect('/admin/publishers');
   } catch (error) {
-    console.error('Error deleting publisher:', error);
-    res.status(500).send('Lỗi server');
+    console.error('Error toggling publisher status:', error);
+    return res.status(500).json({ error: 'Database update failed: ' + error.message });
   }
 };

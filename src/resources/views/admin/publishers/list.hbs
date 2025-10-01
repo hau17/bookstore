@@ -1,5 +1,15 @@
 <h2>Quản lý nhà xuất bản</h2> 
 <a href="/admin/publishers/add"><button class="btn btn-primary">Thêm nhà xuất bản</button></a>
+<!-- Bộ lọc -->
+<div class="mb-3">
+  <label for="publisher-status-filter" class="form-label">Lọc nhà xuất bản:</label>
+  <select id="publisher-status-filter" class="form-select select2">
+    <option value="" {{#unless filter}}selected{{/unless}}>Tất cả</option>
+    <option value="active" {{#if (eq filter 'active')}}selected{{/if}}>Đang hoạt động</option>
+    <option value="inactive" {{#if (eq filter 'inactive')}}selected{{/if}}>Ngừng hoạt động</option>
+  </select>
+</div>
+
 <table id="publisherTable" class="display">
     <thead>
         <tr> 
@@ -31,13 +41,22 @@
                     <a href="/admin/publishers/{{this.publisher_id}}/edit">
                         <button class="btn btn-primary" data-id="{{this.publisher_id}}">Sửa</button>
                     </a>
-                    <!-- Nút xóa -->
-                    <button class="btn btn-danger"
-                        data-id="{{this.publisher_id}}"
+                    <!-- Nút khóa/mở khóa -->
+                    {{#if (eq this.status "1")}}
+                        <button class="btn btn-warning toggle-status-btn" 
+                        data-id="{{this.publisher_id}}" 
                         data-name="{{this.publisher_name}}"
                         data-bs-toggle="modal"
-                        data-bs-target="#delete-modal"
-                        data-type="publishers">Xóa</button>
+                        data-bs-target="#toggle-status-modal"
+                        data-type="publishers">Khóa</button>
+                    {{else}}
+                        <button class="btn btn-success toggle-status-btn" 
+                        data-id="{{this.publisher_id}}" 
+                        data-name="{{this.publisher_name}}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#toggle-status-modal"
+                        data-type="publishers">Mở khóa</button>
+                    {{/if}}
                 </td>
             </tr>
         {{/each}}

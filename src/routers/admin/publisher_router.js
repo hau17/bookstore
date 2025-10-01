@@ -20,7 +20,6 @@ router.put('/:id/edit', publisherController.update);
 // Hiển thị chi tiết nhà xuất bản
 router.get('/:id', publisherController.getById);
 
-// Xóa nhà xuất bản
-router.delete('/:id', publisherController.delete);
-
+// Cập nhật trạng thái nhà xuất bản (khóa/mở khóa)
+router.patch('/:id/status', publisherController.toggleStatus);
 module.exports = router;

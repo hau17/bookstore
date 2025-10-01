@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Chi tiết nhà xuất bản
+  $('#publisher-status-filter').on('change', function () {
+    let value=$(this).val();
+    window.location.href = '/admin/publishers' + (value ? '?filter=' + value : '');
+  });
+    // Chi tiết nhà xuất bản
   const detailModal = document.getElementById('modal-publisher-detail-admin');
   if (detailModal) {
     document.querySelector('#publisherTable tbody').addEventListener('click', function (event) {

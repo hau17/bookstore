@@ -1,0 +1,14 @@
+<div class="mt-4">
+  <h3>Sửa loại sản phẩm</h3>
+  <form method="POST" action="/admin/categories/{{category.category_id}}/edit?_method=PUT">
+    <div class="mb-3">
+      <label class="form-label">Tên loại sản phẩm</label>
+      <input type="text" class="form-control" name="category_name" value="{{category.category_name}}" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Mô tả</label>
+      <textarea class="form-control" name="description">{{category.description}}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+  </form>
+</div>

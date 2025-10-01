@@ -1,0 +1,48 @@
+<h2>Quản lý loại sản phẩm</h2>
+<a href="/admin/categories/add"><button class="btn btn-primary">Thêm loại sản phẩm</button></a>
+<table id="categoryTable" class="display">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Tên loại</th>
+      <th>Mô tả</th>
+      <th>Trạng thái</th>
+      <th>Thao tác</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each categories}}
+    <tr class="category-row" 
+      data-id="{{this.category_id}}"
+      data-name="{{this.category_name}}"
+      data-description="{{this.description}}">
+      <td>{{this.category_id}}</td>
+      <td>{{this.category_name}}</td>
+      <td>{{this.description}}</td>
+      <td>{{#if (eq this.status "1")}}Hoạt động{{else}}Ngừng hoạt động{{/if}}</td>
+      <td>
+        <a href="/admin/categories/{{this.category_id}}/edit">
+        <button class="btn btn-primary">Sửa</button>
+        </a>
+        {{#if (eq this.status "1")}}
+            <button class="btn btn-warning toggle-status-btn" 
+            data-id="{{this.category_id}}" 
+            data-name="{{this.category_name}}"
+            data-bs-toggle="modal"
+            data-bs-target="#toggle-status-modal"
+            data-type="categories">Khóa</button>
+        {{else}}
+            <button class="btn btn-success toggle-status-btn" 
+            data-id="{{this.category_id}}" 
+            data-name="{{this.category_name}}"
+            data-bs-toggle="modal"
+            data-bs-target="#toggle-status-modal"
+            data-type="categories">Mở khóa</button>
+        {{/if}}
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<script src="/js/admin/category.js"></script>
