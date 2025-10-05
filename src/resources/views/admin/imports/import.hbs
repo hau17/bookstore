@@ -1,0 +1,59 @@
+<h2>Nhập sách</h2>
+<div class="row">
+
+  <!-- Bộ lọc nhà xuất bản -->
+  <div class="col-md-12 mb-3">
+    <label for="publisher-status-filter" class="form-label">Lọc theo nhà xuất bản:</label>
+    <select id="publisher-status-filter" class="form-select select2">
+      <option value="">Tất cả</option>
+      {{#each publishers}}
+        <option value="{{this.publisher_id}}" 
+          {{#if (eq ../selectedPublisherId this.publisher_id)}}selected{{/if}}>
+          {{this.publisher_name}}
+        </option>
+      {{/each}}
+    </select>
+  </div>
+
+  <!-- Danh sách sách -->
+  <div class="col-md-6">
+    <table id="importBookTable" class="display">
+      <thead>
+        <tr>
+          <th>Tên sách</th>
+          <th>Tác giả</th>
+          <th>Nhà xuất bản</th>
+          <th>Số lượng</th>
+          <th>Giá bán</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each books}}
+          <tr data-book-id="{{this.book_id}}" 
+              data-title="{{this.book_title}}" 
+              data-publisher-id="{{this.publisher_id}}">
+            <td>{{this.book_title}}</td>
+            <td>{{this.author_name}}</td>
+            <td>{{this.publisher_name}}</td>
+            <td>{{this.stock_quantity}}</td>
+            <td>{{this.price}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Danh sách sách đã chọn -->
+  <div class="col-md-6">
+    <h3>Sách đã chọn</h3>
+    <form id="importForm" action="/admin/imports/add" method="POST">
+      <input type="hidden" id="selectedPublisher" name="publisher_id">
+      <div id="selectedBooks" class="mb-3">
+        <!-- Selected books will be added here dynamically -->
+      </div>
+      <button type="submit" class="btn btn-success">Nhập hàng</button>
+    </form>
+  </div>
+</div>
+
+<script src="/js/admin/import.js"></script>

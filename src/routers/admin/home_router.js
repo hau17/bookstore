@@ -7,6 +7,7 @@ const customerRouter = require('./customer_router.js');
 const homeController = require('../../controllers/admin/home.js');
 const publisherRouter = require('./publisher_router.js');
 const categoryRouter = require('./category_router.js');
+const importRouter = require('./import_router.js');
 
 // Middleware kiểm tra đăng nhập admin
 function checkAdmin(req, res, next) {
@@ -22,17 +23,20 @@ router.get('/login', homeController.getLoginPage);
 router.post('/login', homeController.postLogin);
 
 // Trang chủ admin
-router.get('/', checkAdmin, (req, res) => {
-  res.render('admin/home', { layout: 'main-admin' });
-});
+// router.get('/', checkAdmin, (req, res) => {
+//   res.render('admin/home', { layout: 'main-admin' });
+// });
 
-// Các router con chỉ cho admin
-router.use('/products', checkAdmin, productRouter);
-router.use('/authors', checkAdmin, authorRouter);
-router.use('/orders', checkAdmin, orderRouter);
-router.use('/customers', checkAdmin, customerRouter);
-router.use('/publishers', checkAdmin, publisherRouter);
-router.use('/categories', checkAdmin, categoryRouter);
+// // Các router con chỉ cho admin
+// router.use('/products', checkAdmin, productRouter);
+// router.use('/authors', checkAdmin, authorRouter);
+// router.use('/orders', checkAdmin, orderRouter);
+// router.use('/customers', checkAdmin, customerRouter);
+// router.use('/publishers', checkAdmin, publisherRouter);
+// router.use('/categories', checkAdmin, categoryRouter);
+router.use('/imports', importRouter);
+
+// Logout route
 router.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {

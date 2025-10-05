@@ -15,7 +15,7 @@ exports.getAll = async (filter = '') => {
       p.payment_name
     FROM orders o
     JOIN order_status os ON o.status_id = os.status_id
-    JOIN payment p ON o.payment_id = p.payment_id
+    JOIN payments p ON o.payment_id = p.payment_id
     JOIN users u ON o.user_id = u.user_id
   `;
   let values = [];

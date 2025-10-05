@@ -1,19 +1,33 @@
 const publisherService = require('../../services/admin/publisher_service.js');
 
 exports.list = async (req, res) => {
-  try {
-    const filter = req.query.filter || '';
-    const publishers = await publisherService.getAll(filter);
-    res.render('admin/publishers/list', { 
-      publishers, layout: 'main-admin', 
-      title: 'Quản lý nhà xuất bản' , 
-      filter });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Lỗi server');
-  }
-};
+    try {
+        const filterString = req.query.filter || ''; 
+        let statusFilter = null; // Mặc định là null (không lọc)
 
+        // Chuyển đổi chuỗi filter thành giá trị số (0 hoặc 1)
+        if (filterString === 'active') {
+            statusFilter = 1;
+        } else if (filterString === 'inactive') {
+            statusFilter = 0;
+        }
+
+        // Truyền tham số dưới dạng đối tượng { status: value }
+        const publishers = await publisherService.getAll({ 
+            status: statusFilter 
+        }); 
+
+        res.render('admin/publishers/list', { 
+            publishers, 
+            layout: 'main-admin', 
+            title: 'Quản lý nhà xuất bản' , 
+            filter: filterString // Giữ lại chuỗi để hiển thị trạng thái bộ lọc trên View
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Lỗi server');
+    }
+};
 exports.getById = async (req, res) => {
   try {
     const publisher = await publisherService.getById(req.params.id);

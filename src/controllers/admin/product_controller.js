@@ -8,9 +8,9 @@ exports.list = async (req, res) => {
     const filter = req.query.filter || '';
     let products;
     if (filter === 'active') {
-      products = await productService.getAll(1); 
+      products = await productService.getAll({status : 1}); 
     } else if (filter === 'inactive') {
-      products = await productService.getAll(0);
+      products = await productService.getAll({status : 0});
     } else {
       products = await productService.getAll(); 
     } 

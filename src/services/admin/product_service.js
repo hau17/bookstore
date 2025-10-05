@@ -1,7 +1,6 @@
-const e = require('express');
 const db = require('../../config/db.js')
 
-exports.getAll = async (status) => {
+exports.getAll = async ({ status, publisherId } = {}) => {
   let sql = `
     SELECT 
       b.book_id,
@@ -13,6 +12,7 @@ exports.getAll = async (status) => {
       b.image_path,
       b.created_date,
       b.status,
+      b.publisher_id,
       c.category_name,
       a.author_name,
       p.publisher_name
@@ -20,18 +20,30 @@ exports.getAll = async (status) => {
     LEFT JOIN categories c ON b.category_id = c.category_id
     LEFT JOIN authors a ON b.author_id = a.author_id
     LEFT JOIN publishers p ON b.publisher_id = p.publisher_id
+    WHERE 1=1
   `;
+
+  const params = [];
+
   if (status !== undefined) {
-    sql += ' WHERE b.status = ?';
+    sql += ' AND b.status = ?';
+    params.push(status);
   }
+
+  if (publisherId !== undefined) {
+    sql += ' AND b.publisher_id = ?';
+    params.push(publisherId);
+  }
+
   try {
-    const [products] = status !== undefined ? await db.query(sql, [status]) : await db.query(sql);
-      return products;
+    const [products] = await db.query(sql, params);
+    return products;
   } catch (error) {
     console.error('Error fetching products:', error);
     throw new Error('Database fetch failed: ' + error.message);
   }
 };
+
 
 exports.getProductById = async (id) => {
   const sql = `
@@ -111,3 +123,23 @@ exports.delete = async(id) => {
     throw new Error('Database delete failed: ' + error.message);
   }
 }
+
+exports.addImport = async ({ book_id, quantity, import_price }) => {
+  const sql = `
+    UPDATE books
+    SET 
+      stock_quantity = stock_quantity + ?,
+      avg_import_price = (avg_import_price * stock_quantity + ? * ?) / (stock_quantity + ?),
+      price = (avg_import_price * (1 + discount_percentage / 100))
+    WHERE book_id = ?`;
+
+  const values = [quantity, quantity, import_price, quantity, book_id];
+
+  try {
+    const [result] = await db.query(sql, values);
+    return result.affectedRows;
+  } catch (error) {
+    console.error('Error adding import:', error);
+    throw new Error('Database update failed: ' + error.message);
+  }
+};

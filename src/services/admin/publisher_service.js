@@ -1,33 +1,27 @@
 const db = require('../../config/db.js');
+exports.getAll = async ({ status } = {}) => {
+    let sql = `
+      SELECT 
+        publisher_id,
+        publisher_name,
+        address,
+        phone_number,
+        description,
+        status
+      FROM publishers
+    `;
 
-exports.getAll = async (filter) => {
-  let sql = `
-    SELECT 
-      publisher_id,
-      publisher_name,
-      address,
-      phone_number,
-      description,
-      status
-    FROM publishers
-  `;
-
-  if (filter === 'active') {
-    sql += ' WHERE status = 1';
-  } else if (filter === 'inactive') {
-    sql += ' WHERE status = 0';
-  } else {
-    sql += ''; // No filter, get all
-  }
-  try {
-      const [publishers] = await db.query(sql);
-      return publishers;
-  } catch (error) {
-    console.error('Error fetching publishers:', error);
-    throw new Error('Database fetch failed: ' + error.message);
-  }
+    if (status !== null && status !== undefined) {
+        sql += ` WHERE status = ${status}`; 
+    }
+    try {
+        const [publishers] = await db.query(sql);
+        return publishers;
+    } catch (error) {
+        console.error('Error fetching publishers:', error);
+        throw new Error('Database fetch failed: ' + error.message);
+    }
 };
-
 exports.getById = async (id) => {
   const sql = `
     SELECT 
