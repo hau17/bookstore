@@ -1,0 +1,89 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="text-center">Đăng ký tài khoản</h3>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="/account/register">
+            <div class="mb-3">
+              <label for="fullname" class="form-label">Họ và tên</label>
+              <input
+                type="text"
+                class="form-control"
+                id="fullname"
+                name="fullname"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="phone_number" class="form-label">Số điện thoại</label>
+              <input
+                type="tel"
+                class="form-control"
+                id="phone_number"
+                name="phone_number"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="address" class="form-label">Địa chỉ</label>
+              <textarea
+                class="form-control"
+                id="address"
+                name="address"
+                rows="2"
+                required
+              ></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Mật khẩu</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="confirm_password" class="form-label">Xác nhận mật khẩu</label>
+              <input
+                type="password"
+                class="form-control"
+                id="confirm_password"
+                name="confirm_password"
+                required
+              />
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">Đăng ký</button>
+            </div>
+
+            <div class="text-center mt-3">
+              <p>Đã có tài khoản?
+                <a href="/account/login">Đăng nhập ngay</a></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

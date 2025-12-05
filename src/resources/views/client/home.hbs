@@ -1,0 +1,136 @@
+<h2 class="m-3">Sách mới nhất</h2>
+<div id="product-item" class="d-flex overflow-auto gap-3 pb-3 px-5">
+  {{#each newBooks}}
+    <div
+      class="card flex-shrink-0 product-card"
+      style="width: 18rem; scroll-snap-align: start;"
+      data-id="{{this.book_id}}"
+      data-title="{{this.book_title}}"
+      data-price="{{this.price}}"
+      data-discount="{{this.discount_percentage}}"
+      data-description="{{this.description}}"
+      data-image="{{this.image_path}}"
+      data-author="{{this.author_name}}"
+      data-publisher="{{this.publisher_name}}"
+      data-category="{{this.category_name}}"
+    >
+      <img src="{{this.image_path}}" class="card-img-top" alt="ảnh sản phẩm" />
+      <div class="card-body">
+        <h5 class="card-title">{{this.book_title}}</h5>
+        <p class="card-text fw-bold mt-auto">
+          <span class="text-danger">Giá bán:
+            {{formatPrice this.selling_price}}
+            VND</span>
+          {{#if this.discount_percentage}}
+            <span
+              class="badge bg-danger ms-2"
+            >-{{this.discount_percentage}}%</span>
+          {{/if}}
+          <br />
+          <small class="text-muted text-decoration-line-through">{{formatPrice
+              this.original_price
+            }}
+            VND</small>
+        </p>
+        <div class="d-flex gap-2">
+          <a
+            href="/products/{{this.book_id}}"
+            class="btn btn-outline-secondary btn-sm"
+          >
+            <i class="bi bi-eye"></i>
+            Xem
+          </a>
+          <button
+            type="button"
+            class="btn btn-outline-primary btn-sm product__btn--add-to-cart"
+            data-id="{{this.book_id}}"
+          >Thêm vào giỏ</button>
+
+          <a href="/checkout/buy/{{this.book_id}}">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm btn-buy"
+            >Mua</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</div>
+<h2 class="m-3">Giảm giá sốc</h2>
+<div id="product-item" class="d-flex overflow-auto gap-3 pb-3 px-5">
+  <div
+    id="discountedBooksContainer"
+    class="d-flex overflow-auto gap-3 pb-3 px-5"
+    style="scroll-snap-type: x mandatory;"
+  >
+    {{#each discountedBooks}}
+      <div
+        class="card flex-shrink-0 product-card"
+        style="width: 18rem; scroll-snap-align: start;"
+        data-id="{{this.book_id}}"
+        data-title="{{this.book_title}}"
+        data-price="{{this.price}}"
+        data-discount="{{this.discount_percentage}}"
+        data-description="{{this.description}}"
+        data-image="{{this.image_path}}"
+        data-author="{{this.author_name}}"
+        data-publisher="{{this.publisher_name}}"
+        data-category="{{this.category_name}}"
+      >
+        <img
+          src="{{this.image_path}}"
+          class="card-img-top"
+          alt="ảnh sản phẩm"
+        />
+        <div class="card-body">
+          <h5 class="card-title">{{this.book_title}}</h5>
+          <p class="card-text fw-bold mt-auto">
+            <span class="text-danger">Giá bán:
+              {{formatPrice this.selling_price}}
+              VND</span>
+            {{#if this.discount_percentage}}
+              <span
+                class="badge bg-danger ms-2"
+              >-{{this.discount_percentage}}%</span>
+            {{/if}}
+            <br />
+            <small class="text-muted text-decoration-line-through">{{formatPrice
+                this.original_price
+              }}
+              VND</small>
+          </p>
+          <div class="d-flex gap-2">
+            <a
+              href="/products/{{this.book_id}}"
+              class="btn btn-outline-secondary btn-sm"
+            >
+              <i class="bi bi-eye"></i>
+              Xem
+            </a>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm product__btn--add-to-cart"
+              data-id="{{this.book_id}}"
+            >Thêm vào giỏ</button>
+            <a href="/checkout/buy/{{this.book_id}}">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm btn-buy"
+              >Mua</button>
+            </a>
+
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+  <button
+    class="btn btn-light position-absolute top-50 end-0 translate-middle-y shadow"
+    style="z-index: 2;"
+  >
+    <i class="bi bi-chevron-right"></i>
+  </button>
+</div>
+<script src="/js/client/home.js"></script>

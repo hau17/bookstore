@@ -1,0 +1,89 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-pencil-square"></i>
+            Cập nhật thông tin
+          </h5>
+        </div>
+        <div class="card-body">
+          {{#if toastr}}
+            <div
+              class="alert alert-{{toastr.type}} alert-dismissible fade show"
+              role="alert"
+            >
+              {{toastr.message}}
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+              ></button>
+            </div>
+          {{/if}}
+
+          <form method="POST" action="/account/edit" id="editForm">
+            <div class="mb-3">
+              <label for="fullname" class="form-label">Họ và tên:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="fullname"
+                name="fullname"
+                value="{{customer.fullname}}"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email:</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                value="{{customer.email}}"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="phone" class="form-label">Số điện thoại:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="phone"
+                name="phone_number"
+                value="{{customer.phone_number}}"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="address" class="form-label">Địa chỉ:</label>
+              <textarea
+                class="form-control"
+                id="address"
+                name="address"
+                rows="3"
+                required
+              >{{customer.address}}</textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary flex-grow-1">
+                <i class="bi bi-check-circle"></i>
+                Lưu thay đổi
+              </button>
+              <a href="/account" class="btn btn-secondary flex-grow-1">
+                <i class="bi bi-x-circle"></i>
+                Hủy
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

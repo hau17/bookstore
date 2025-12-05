@@ -1,80 +1,88 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
   // Initialize DataTable
-  $('#importBookTable').DataTable({
+  $("#importBookTable").DataTable({
     language: {
-      search: 'Tìm kiếm:',
-      lengthMenu: 'Hiển thị _MENU_ mục',
-      info: 'Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục',
-      infoEmpty: 'Không có mục nào',
+      search: "Tìm kiếm:",
+      lengthMenu: "Hiển thị _MENU_ mục",
+      info: "Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục",
+      infoEmpty: "Không có mục nào",
       paginate: {
-        next: 'Tiếp theo',
-        previous: 'Trước'
-      }
-    }
+        next: "Tiếp theo",
+        previous: "Trước",
+      },
+    },
   });
 
   // Initialize Select2 với placeholder tùy chỉnh
-  $('#publisher-status-filter').select2({
-    placeholder: 'Chọn nhà xuất bản',
+  $("#publisher-status-filter").select2({
+    placeholder: "Chọn nhà xuất bản",
     allowClear: true,
     language: {
-      noResults: function() {
+      noResults: function () {
         return "Không tìm thấy kết quả";
-      }
-    }
+      },
+    },
   });
 
-  
-  const selectedPublisher = document.getElementById('selectedPublisher');
-  const publisherStatusFilter = document.getElementById('publisher-status-filter');
+  const selectedPublisher = document.getElementById("selectedPublisher");
+  const publisherStatusFilter = document.getElementById(
+    "publisher-status-filter"
+  );
   // lưu giá trị nhà xuất bản đã chọn trước khi submit
-  document.getElementById('importForm').addEventListener('submit', function() {
+  document.getElementById("importForm").addEventListener("submit", function () {
     selectedPublisher.value = publisherStatusFilter.value;
   });
   // Lọc theo nhà xuất bản
-  $('#publisher-status-filter').on('change', function() {
+  $("#publisher-status-filter").on("change", function () {
     publisherValue = $(this).val();
-    
+
     // Xóa danh sách sách đã chọn khi đổi nhà xuất bản
-    const selectedBookList = document.getElementById('selectedBooks');
-    selectedBookList.innerHTML = '';
-    
-    window.location.href = '/admin/imports' + (publisherValue ? '?publisher=' + publisherValue : '');
+    const selectedBookList = document.getElementById("selectedBooks");
+    selectedBookList.innerHTML = "";
+
+    window.location.href =
+      "/admin/imports/new" +
+      (publisherValue ? "?publisher=" + publisherValue : "");
   });
 
-  const importTable = document.querySelector('#importBookTable tbody');
-  const selectedBookList = document.getElementById('selectedBooks');
+  const importTable = document.querySelector("#importBookTable tbody");
+  const selectedBookList = document.getElementById("selectedBooks");
 
   if (importTable) {
-    importTable.addEventListener('click', function(event) {
-      const row = event.target.closest('tr');
+    importTable.addEventListener("click", function (event) {
+      const row = event.target.closest("tr");
       if (!row) return;
 
-      if (publisherStatusFilter.value === '') {
-        alert('Vui lòng chọn nhà xuất bản trước khi thêm sách!');
+      if (publisherStatusFilter.value === "") {
+        alert("Vui lòng chọn nhà xuất bản trước khi thêm sách!");
         return;
       }
 
-      const bookId = row.getAttribute('data-book-id');
-      const bookTitle = row.getAttribute('data-title');
-      const bookPublisherId = row.getAttribute('data-publisher-id');
+      const bookId = row.getAttribute("data-book-id");
+      const bookTitle = row.getAttribute("data-title");
+      const bookPublisherId = row.getAttribute("data-publisher-id");
 
       // Kiểm tra xem sách có cùng nhà xuất bản không
       if (parseInt(bookPublisherId) !== parseInt(publisherStatusFilter.value)) {
-        alert('Sách này không thuộc nhà xuất bản đã chọn!');
-        console.log("bookPublisherId", bookPublisherId, "publisherValue", publisherStatusFilter.value);
+        alert("Sách này không thuộc nhà xuất bản đã chọn!");
+        console.log(
+          "bookPublisherId",
+          bookPublisherId,
+          "publisherValue",
+          publisherStatusFilter.value
+        );
         return;
       }
 
       // Check if the book is already added
       if (selectedBookList.querySelector(`[data-id="${bookId}"]`)) {
-        alert('Sách đã được chọn để nhập.');
+        alert("Sách đã được chọn để nhập.");
         return;
       }
 
       // Add selected book to the list
-      const book = document.createElement('div');
-      book.setAttribute('data-id', bookId);
+      const book = document.createElement("div");
+      book.setAttribute("data-id", bookId);
       book.className = "card p-2 mb-2 shadow-sm";
 
       book.innerHTML = `
@@ -101,9 +109,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  selectedBookList.addEventListener('click', function(event) {
-    if (event.target.classList.contains('btn-remove')) {
-      const bookDiv = event.target.closest('div[data-id]');
+  selectedBookList.addEventListener("click", function (event) {
+    if (event.target.classList.contains("btn-remove")) {
+      const bookDiv = event.target.closest("div[data-id]");
       if (bookDiv) {
         selectedBookList.removeChild(bookDiv);
       }

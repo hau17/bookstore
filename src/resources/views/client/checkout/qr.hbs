@@ -1,0 +1,20 @@
+<div class="container my-5 text-center">
+  <h2 class="mb-4">Thanh toán chuyển khoản</h2>
+
+  {{#if qrImg}}
+    <p>Quét QR dưới đây để thanh toán cho đơn hàng #{{orderId}}</p>
+    <img
+      src="{{qrImg}}"
+      alt="QR Thanh toán"
+      class="img-fluid"
+      style="max-width:300px;"
+    />
+  {{else}}
+    <p class="text-danger">Đơn hàng này không phải chuyển khoản hoặc QR không
+      khả dụng.</p>
+  {{/if}}
+
+  <div class="mt-4">
+    <a href="/" class="btn btn-secondary">Quay lại trang chủ</a>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-person-circle"></i>
+            Thông tin tài khoản
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <p class="mb-2">
+                <strong>Họ và tên:</strong><br />
+                <span class="text-muted">{{customer.fullname}}</span>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-2">
+                <strong>Email:</strong><br />
+                <span class="text-muted">{{customer.email}}</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <p class="mb-2">
+                <strong>Số điện thoại:</strong><br />
+                <span class="text-muted">{{customer.phone_number}}</span>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-2">
+                <strong>Ngày đăng ký:</strong><br />
+                <span class="text-muted">{{formatDate
+                    customer.created_at
+                  }}</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <p class="mb-2">
+              <strong>Địa chỉ:</strong><br />
+              <span class="text-muted">{{customer.address}}</span>
+            </p>
+          </div>
+
+          <hr />
+
+          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <a href="/account/edit" class="btn btn-primary">
+              <i class="bi bi-pencil-square"></i>
+              Cập nhật thông tin
+            </a>
+            <a href="/account/change-password" class="btn btn-warning">
+              <i class="bi bi-key"></i>
+              Đổi mật khẩu
+            </a>
+            <a href="/account/orders" class="btn btn-info">
+              <i class="bi bi-bag"></i>
+              Đơn hàng của tôi
+            </a>
+            <a href="/account/logout" class="btn btn-danger">
+              <i class="bi bi-box-arrow-right"></i>
+              Đăng xuất
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

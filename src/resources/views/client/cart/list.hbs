@@ -1,0 +1,194 @@
+<div class="container mt-5 mb-5">
+
+  <div class="row">
+    <div class="col-12">
+      <h2 class="mb-4">
+        <i class="bi bi-bag-check"></i>
+        Giỏ hàng
+      </h2>
+    </div>
+  </div>
+
+  {{#if cartItems}}
+    <div class="row">
+      <!-- Cart Items -->
+      <div class="col-12 col-lg-8 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            {{#each cartItems}}
+              <div class="cart-item card mb-3 border-0 bg-light p-3">
+                <div class="row g-3 align-items-center">
+                  <!-- Product Image -->
+                  <div class="col-12 col-sm-3">
+                    <img
+                      src="{{this.image_path}}"
+                      alt="{{this.book_title}}"
+                      class="img-fluid rounded"
+                      style="max-height: 150px; object-fit: cover;"
+                    />
+                  </div>
+
+                  <!-- Product Details -->
+                  <div class="col-12 col-sm-4">
+                    <h6 class="card-title mb-2">
+                      <a
+                        href="/products/{{this.book_id}}"
+                        class="text-decoration-none"
+                      >
+                        {{this.book_title}}
+                      </a>
+                    </h6>
+                    <div class="mb-2">
+                      {{#if this.discount_percentage}}
+                        <span class="badge bg-danger me-2">
+                          -{{this.discount_percentage}}%
+                        </span>
+                      {{/if}}
+                      <small class="text-muted">
+                        Kho:
+                        {{this.stock_quantity}}
+                      </small>
+                    </div>
+                    <div>
+                      {{#if this.discount_percentage}}
+                        <del class="text-muted small">
+                          {{formatPrice this.original_price}}đ
+                        </del>
+                        <br />
+                      {{/if}}
+                      <strong class="text-danger">
+                        {{formatPrice this.selling_price}}đ
+                      </strong>
+                    </div>
+                  </div>
+
+                  <!-- Quantity Control -->
+                  <div class="col-12 col-sm-3">
+                    <div class="input-group quantity-group">
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-sm decrease-qty"
+                        data-id="{{this.book_id}}"
+                      >
+                        <i class="bi bi-dash"></i>
+                      </button>
+
+                      <input
+                        type="text"
+                        class="form-control form-control-sm text-center quantity-input"
+                        value="{{this.quantity}}"
+                        data-id="{{this.book_id}}"
+                        readonly
+                      />
+
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-sm increase-qty"
+                        data-id="{{this.book_id}}"
+                        data-max="{{this.stock_quantity}}"
+                      >
+                        <i class="bi bi-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Item Total & Actions -->
+                  <div class="col-12 col-sm-2 text-end">
+                    <div class="mb-2">
+                      <strong class="text-success">
+                        {{formatPrice this.itemTotal}}đ
+                      </strong>
+                    </div>
+                    <form
+                      method="POST"
+                      action="/cart/remove"
+                      style="display: inline;"
+                    >
+                      <input
+                        type="hidden"
+                        name="book_id"
+                        value="{{this.book_id}}"
+                      />
+                      <button
+                        type="submit"
+                        class="btn btn-danger btn-sm"
+                        data-id="{{this.book_id}}"
+                      >
+                        <i class="bi bi-trash"></i>
+                        <span class="d-none d-sm-inline">Xóa</span>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart Summary -->
+      <div class="col-12 col-lg-4">
+        <div class="card shadow-sm sticky-top" style="top: 20px;">
+          <div class="card-body">
+            <h5 class="card-title mb-3">
+              <i class="bi bi-receipt"></i>
+              Tóm tắt đơn hàng
+            </h5>
+
+            <table class="table table-sm border-0">
+              <tr>
+                <td>Tạm tính:</td>
+                <td class="text-end">
+                  <strong>{{formatPrice grandTotal}}đ</strong>
+                </td>
+              </tr>
+              <tr>
+                <td>Vận chuyển:</td>
+                <td class="text-end">
+                  <span class="badge bg-info">Miễn phí</span>
+                </td>
+              </tr>
+              <tr class="border-top">
+                <td><strong>Tổng cộng:</strong></td>
+                <td class="text-end">
+                  <strong class="text-danger fs-5">
+                    {{formatPrice grandTotal}}đ
+                  </strong>
+                </td>
+              </tr>
+            </table>
+
+            <a href="/checkout/cart" class="btn btn-success w-100 mb-2">
+              <i class="bi bi-credit-card"></i>
+              Mua hàng
+            </a>
+            <a href="/products" class="btn btn-outline-secondary w-100">
+              <i class="bi bi-arrow-left"></i>
+              Tiếp tục mua sắm
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {{else}}
+    <div class="row">
+      <div class="col-12">
+        <div class="alert alert-info text-center" role="alert">
+          <i
+            class="bi bi-inbox"
+            style="font-size: 3rem; display: block; margin-bottom: 1rem;"
+          ></i>
+          <h5>Giỏ hàng của bạn đang trống</h5>
+          <p class="mb-3">Hãy thêm một số sản phẩm yêu thích vào giỏ hàng của
+            bạn.</p>
+          <a href="/products" class="btn btn-primary">
+            <i class="bi bi-shop"></i>
+            Tiếp tục mua sắm
+          </a>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+</div>
+
+<script src="/js/client/cart.js"></script>

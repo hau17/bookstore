@@ -1,57 +1,78 @@
 <div class="mt-4">
-    <h3>Thêm sản phẩm</h3>
-    <form method="POST" action="/admin/products/add" enctype="multipart/form-data">        
-        <div class="mb-3">
-            <label class="form-label">Tên sách </label>
-            <input type="text" class="form-control" name="book_title" required>
-        </div>
+  <h3>Thêm sản phẩm</h3>
+  <form
+    method="POST"
+    action="/admin/products/add"
+    enctype="multipart/form-data"
+  >
+    <div class="mb-3">
+      <label class="form-label">Tên sách </label>
+      <input type="text" class="form-control" name="book_title" required />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Thể loại </label>
-            <select class="form-select select2" name="category_id" required>
-                <option value="" disabled selected>-- Chọn thể loại --</option>
-                {{#each categories}}
-                    <option value="{{this.category_id}}">{{this.category_name}}</option>
-                {{/each}}
-            </select>
-        </div>
+    <div class="mb-3">
+      <label class="form-label">Thể loại </label>
+      <select class="form-select select2" name="category_id" required>
+        <option value="" disabled selected>-- Chọn thể loại --</option>
+        {{#each categories}}
+          <option value="{{this.category_id}}">{{this.category_name}}</option>
+        {{/each}}
+      </select>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Tác giả </label>
-            <select class="form-select select2" name="author_id" required>
-                <option value="" disabled selected>--  Chọn tác giả --</option>
-                {{#each authors}}
-                    <option value="{{this.author_id}}">{{this.author_name}}</option>
-                {{/each}}
-            </select>
-        </div>
+    <div class="mb-3">
+      <label class="form-label">Tác giả </label>
+      <select class="form-select select2" name="author_id" required>
+        <option value="" disabled selected>-- Chọn tác giả --</option>
+        {{#each authors}}
+          <option value="{{this.author_id}}">{{this.author_name}}</option>
+        {{/each}}
+      </select>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Nhà xuất bản </label>
-            <select class="form-select select2" name="publisher_id" required>
-                <option value="" disabled selected>-- Chọn nhà xuất bản --</option>
-                {{#each publishers}}
-                    <option value="{{this.publisher_id}}">{{this.publisher_name}}</option>
-                {{/each}}
-            </select>
-        </div>
+    <div class="mb-3">
+      <label class="form-label">Nhà xuất bản </label>
+      <select class="form-select select2" name="publisher_id" required>
+        <option value="" disabled selected>-- Chọn nhà xuất bản --</option>
+        {{#each publishers}}
+          <option value="{{this.publisher_id}}">{{this.publisher_name}}</option>
+        {{/each}}
+      </select>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Phần trăm lợi nhận (%)</label>
-            <input type="number" step="0.01" class="form-control" name="discount_percentage" value="0.00">
-        </div>
+    <div class="mb-3">
+      <label class="form-label">Phần trăm giảm giá (%)</label>
+      <input
+        type="number"
+        step="0.01"
+        class="form-control"
+        name="discount_percentage"
+        value="0.00"
+      />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Mô tả </label>
-            <textarea class="form-control" name="description" rows="3"></textarea>
-        </div>
+    <div class="mb-3">
+      <label class="form-label">Phần trăm lợi nhuận (%)</label>
+      <input
+        type="number"
+        step="0.01"
+        class="form-control"
+        name="profit_percentage"
+        value="0.00"
+      />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Hình ảnh </label>
-            <input type="file" class="form-control" name="image_path">
-        </div>
+    <div class="mb-3">
+      <label class="form-label">Mô tả </label>
+      <textarea class="form-control" name="description" rows="3"></textarea>
+    </div>
 
-        <button type="submit" class="btn btn-primary">Add Book</button>
-    </form>
+    <div class="mb-3">
+      <label class="form-label">Hình ảnh </label>
+      <input type="file" class="form-control" name="image_path" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Book</button>
+  </form>
 </div>
 <script src="/js/admin/product.js"></script>

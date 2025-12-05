@@ -1,11 +1,17 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const importController = require('../../controllers/admin/import_controller.js');
+const importController = require("../../controllers/admin/import_controller.js");
 
-// Display import page
-router.get('/', importController.list);
+// Display imports list (history)
+router.get("/", importController.listImports);
+
+// Show import form (select books to import)
+router.get("/new", importController.showImportForm);
+
+// Get import details (JSON)
+router.get("/:id", importController.getImportById);
 
 // Handle book import
-router.post('/add', importController.addImport);
+router.post("/add", importController.addImport);
 
 module.exports = router;

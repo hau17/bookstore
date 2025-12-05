@@ -1,0 +1,111 @@
+<div class="container mt-5 mb-5">
+  {{#if product}}
+    <div class="row">
+      <div class="col-12 mb-3">
+        <a href="/products" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Product Image -->
+      <div class="col-12 col-md-5 mb-4">
+        <img
+          src="{{product.image_path}}"
+          alt="{{product.book_title}}"
+          class="img-fluid rounded"
+          style="object-fit: cover; max-height: 500px; width: 100%;"
+        />
+      </div>
+
+      <!-- Product Details -->
+      <div class="col-12 col-md-7">
+        <h2 class="mb-3">{{product.book_title}}</h2>
+
+        <div class="mb-3">
+          <p class="mb-1"><strong>Tác giả:</strong> {{product.author_name}}</p>
+          <p class="mb-1"><strong>Nhà xuất bản:</strong> {{product.publisher_name}}</p>
+          <p class="mb-1"><strong>Loại:</strong> {{product.category_name}}</p>
+          <p class="mb-1">
+            <strong>Tồn kho:</strong>
+            <span class="{{#if (gt product.stock_quantity 0)}}text-success{{else}}text-danger{{/if}}">
+              {{product.stock_quantity}} cuốn
+            </span>
+          </p>
+        </div>
+
+        <hr />
+
+        <!-- Pricing -->
+        <div class="mb-4">
+          <div class="h4 text-danger mb-2">
+            Giá bán:
+            <strong>{{formatPrice product.discountedPrice}} VND</strong>
+          </div>
+          {{#if product.discount_percentage}}
+            <div>
+              <span class="badge bg-danger me-2">-{{product.discount_percentage}}%</span>
+              <del class="text-muted">{{formatPrice selling_price.}} VND</del>
+            </div>
+          {{else}}
+            <small class="text-muted">{{formatPrice product.original_price}} VND</small>
+          {{/if}}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-grid gap-2 d-md-flex mb-4">
+          {{#if (gt product.stock_quantity 0)}}
+            <button
+              type="button"
+              class="btn btn-primary flex-grow-1"
+              id="btn-add-to-cart"
+              data-id="{{product.book_id}}"
+            >
+              <i class="bi bi-cart-plus"></i>
+              Thêm vào giỏ
+            </button>
+            <a href="/checkout/buy/{{product.book_id}}" class="btn btn-success flex-grow-1">
+              <i class="bi bi-bag"></i>
+              Mua ngay
+            </a>
+          {{else}}
+            <button type="button" class="btn btn-secondary" disabled>
+              Hết hàng
+            </button>
+          {{/if}}
+        </div>
+
+        <!-- Description -->
+        <div class="card bg-light">
+          <div class="card-body">
+            <h5 class="card-title">Mô tả sản phẩm</h5>
+            <p class="card-text">{{product.description}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products Section (Optional) -->
+    <div class="row mt-5">
+      <div class="col-12">
+        <hr />
+        <a href="/products" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i>
+          Tiếp tục mua sắm
+        </a>
+      </div>
+    </div>
+  {{else}}
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-circle"></i>
+      Sản phẩm không tồn tại.
+    </div>
+    <a href="/products" class="btn btn-primary">
+      <i class="bi bi-arrow-left"></i>
+      Quay lại danh sách sản phẩm
+    </a>
+  {{/if}}
+</div>
+
+<script src="/js/client/product-detail.js"></script>

@@ -14,81 +14,221 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumping data for table bookstore.authors: ~0 rows (approximately)
-INSERT INTO `authors` (`id_tac_gia`, `ten_tac_gia`, `mo_ta`) VALUES
-	(1, 'hau dau', 'tác giả giỏi nhất thế giới');
 
--- Dumping data for table bookstore.books: ~31 rows (approximately)
-INSERT INTO `books` (`id_sach`, `ten_sach`, `id_danh_muc`, `id_tac_gia`, `id_nha_xuat_ban`, `gia`, `phan_tram_khuyen_mai`, `so_luong_ton`, `mo_ta`, `hinh_anh`, `the_loai`, `ngay_tao`, `status`) VALUES
-	(1, 'sach 1', 1, 1, 1, 10000.00, 3.00, 20, 'hay', '/img/products/sach1.png', NULL, '2025-05-21 00:00:00', '1'),
-	(2, 'Sách mẫu số 1', 1, 1, 1, 13750.00, 1.00, 100, 'Mô tả sách mẫu số 1', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(3, 'Sách mẫu số 2', 1, 1, 1, 32228.00, 25.00, 31, 'Mô tả sách mẫu số 2', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(4, 'Sách mẫu số 3', 1, 1, 1, 37053.00, 3.00, 79, 'Mô tả sách mẫu số 3', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(5, 'Sách mẫu số 4', 1, 1, 1, 24073.00, 16.00, 87, 'Mô tả sách mẫu số 4', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(6, 'Sách mẫu số 5', 1, 1, 1, 55474.00, 10.00, 46, 'Mô tả sách mẫu số 5', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(7, 'Sách mẫu số 6', 1, 1, 1, 17997.00, 35.00, 17, 'Mô tả sách mẫu số 6', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(8, 'Sách mẫu số 7', 1, 1, 1, 22003.00, 48.00, 26, 'Mô tả sách mẫu số 7', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(9, 'Sách mẫu số 8', 1, 1, 1, 54325.00, 47.00, 15, 'Mô tả sách mẫu số 8', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(10, 'Sách mẫu số 9', 1, 1, 1, 31975.00, 1.00, 96, 'Mô tả sách mẫu số 9', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(11, 'Sách mẫu số 10', 1, 1, 1, 21207.00, 25.00, 102, 'Mô tả sách mẫu số 10', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(12, 'Sách mẫu số 11', 1, 1, 1, 13286.00, 27.00, 67, 'Mô tả sách mẫu số 11', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(13, 'Sách mẫu số 12', 1, 1, 1, 20329.00, 15.00, 103, 'Mô tả sách mẫu số 12', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(14, 'Sách mẫu số 13', 1, 1, 1, 47585.00, 47.00, 58, 'Mô tả sách mẫu số 13', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(15, 'Sách mẫu số 14', 1, 1, 1, 37949.00, 17.00, 19, 'Mô tả sách mẫu số 14', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(16, 'Sách mẫu số 15', 1, 1, 1, 31171.00, 41.00, 95, 'Mô tả sách mẫu số 15', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(17, 'Sách mẫu số 16', 1, 1, 1, 49109.00, 17.00, 54, 'Mô tả sách mẫu số 16', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(18, 'Sách mẫu số 17', 1, 1, 1, 17100.00, 19.00, 57, 'Mô tả sách mẫu số 17', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(19, 'Sách mẫu số 18', 1, 1, 1, 22110.00, 39.00, 27, 'Mô tả sách mẫu số 18', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(20, 'Sách mẫu số 19', 1, 1, 1, 37110.00, 9.00, 37, 'Mô tả sách mẫu số 19', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(21, 'Sách mẫu số 20', 1, 1, 1, 51834.00, 17.00, 37, 'Mô tả sách mẫu số 20', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(22, 'Sách mẫu số 21', 1, 1, 1, 24748.00, 32.00, 49, 'Mô tả sách mẫu số 21', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(23, 'Sách mẫu số 22', 1, 1, 1, 10385.00, 42.00, 34, 'Mô tả sách mẫu số 22', '/img/products/sach1.png', 'Văn học', '2025-05-20 23:59:00', '0'),
-	(24, 'Sách mẫu số 23', 1, 1, 1, 42611.00, 26.00, 81, 'Mô tả sách mẫu số 23', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(25, 'Sách mẫu số 24', 1, 1, 1, 58479.00, 35.00, 71, 'Mô tả sách mẫu số 24', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(26, 'Sách mẫu số 25', 1, 1, 1, 57888.00, 47.00, 95, 'Mô tả sách mẫu số 25', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(27, 'Sách mẫu số 26', 1, 1, 1, 32130.00, 32.00, 99, 'Mô tả sách mẫu số 26', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(28, 'Sách mẫu số 27', 1, 1, 1, 37430.00, 2.00, 71, 'Mô tả sách mẫu số 27', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(29, 'Sách mẫu số 28', 1, 1, 1, 56897.00, 41.00, 44, 'Mô tả sách mẫu số 28', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(30, 'Sách mẫu số 29', 1, 1, 1, 21190.00, 4.00, 86, 'Mô tả sách mẫu số 29', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(31, 'Sách mẫu số 30', 1, 1, 1, 39016.00, 29.00, 33, 'Mô tả sách mẫu số 30', '/img/products/sach1.png', 'Văn học', '2025-05-21 00:00:00', '0'),
-	(32, 'sach 31', 1, 1, 1, 3.00, 3.00, 33, '33', NULL, NULL, '2025-05-26 16:39:52', '1');
+-- Dumping database structure for book_store
+CREATE DATABASE IF NOT EXISTS `book_store` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+USE `book_store`;
 
--- Dumping data for table bookstore.cart: ~0 rows (approximately)
+-- Dumping structure for table book_store.authors
+CREATE TABLE IF NOT EXISTS `authors` (
+  `author_id` int(11) NOT NULL AUTO_INCREMENT,
+  `author_name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '1',
+  PRIMARY KEY (`author_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table bookstore.cart_items: ~0 rows (approximately)
+-- Data exporting was unselected.
 
--- Dumping data for table bookstore.categories: ~0 rows (approximately)
-INSERT INTO `categories` (`id_danh_muc`, `ten_danh_muc`, `mo_ta`) VALUES
-	(1, 'thiếu nhi', 'dành cho mọi lứa tuổi');
+-- Dumping structure for table book_store.books
+CREATE TABLE IF NOT EXISTS `books` (
+  `book_id` int(11) NOT NULL AUTO_INCREMENT,
+  `book_title` text NOT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `author_id` int(11) DEFAULT NULL,
+  `publisher_id` int(11) DEFAULT NULL,
+  `avg_import_price` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `discount_percentage` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `profit_percentage` decimal(5,2) NOT NULL DEFAULT 10.00,
+  `stock_quantity` int(11) NOT NULL DEFAULT 0,
+  `description` text DEFAULT NULL,
+  `image_path` varchar(255) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `status` tinyint(4) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`book_id`),
+  KEY `category_id` (`category_id`),
+  KEY `author_id` (`author_id`),
+  KEY `publisher_id` (`publisher_id`),
+  CONSTRAINT `books_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`) ON DELETE SET NULL,
+  CONSTRAINT `books_ibfk_2` FOREIGN KEY (`author_id`) REFERENCES `authors` (`author_id`) ON DELETE SET NULL,
+  CONSTRAINT `books_ibfk_3` FOREIGN KEY (`publisher_id`) REFERENCES `publishers` (`publisher_id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table bookstore.import_details: ~0 rows (approximately)
+-- Data exporting was unselected.
 
--- Dumping data for table bookstore.import_notes: ~0 rows (approximately)
+-- Dumping structure for table book_store.carts
+CREATE TABLE IF NOT EXISTS `carts` (
+  `cart_id` int(11) NOT NULL,
+  `cus_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`cart_id`),
+  KEY `user_id` (`cus_id`) USING BTREE,
+  CONSTRAINT `cart_cus` FOREIGN KEY (`cus_id`) REFERENCES `customers` (`cus_id`) ON DELETE SET NULL ON UPDATE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table bookstore.orders: ~0 rows (approximately)
+-- Data exporting was unselected.
 
--- Dumping data for table bookstore.order_details: ~0 rows (approximately)
+-- Dumping structure for table book_store.cart_items
+CREATE TABLE IF NOT EXISTS `cart_items` (
+  `cart_id` int(11) DEFAULT NULL,
+  `book_id` int(11) DEFAULT NULL,
+  `quantity` int(11) NOT NULL,
+  KEY `cart_id` (`cart_id`),
+  KEY `book_id` (`book_id`),
+  CONSTRAINT `cart_items_ibfk_1` FOREIGN KEY (`cart_id`) REFERENCES `carts` (`cart_id`) ON DELETE CASCADE,
+  CONSTRAINT `cart_items_ibfk_2` FOREIGN KEY (`book_id`) REFERENCES `books` (`book_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table bookstore.order_status: ~4 rows (approximately)
-INSERT INTO `order_status` (`id_trang_thai`, `ten_trang_thai`) VALUES
-	(1, 'Chờ xác nhận'),
-	(2, 'Đang chuẩn bị hàng'),
-	(3, 'Đang giao'),
-	(4, 'Đã giao');
+-- Data exporting was unselected.
 
--- Dumping data for table bookstore.order_status_history: ~0 rows (approximately)
+-- Dumping structure for table book_store.categories
+CREATE TABLE IF NOT EXISTS `categories` (
+  `category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`category_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table bookstore.payment_methods: ~3 rows (approximately)
-INSERT INTO `payment_methods` (`id_phuong_thuc`, `ten_phuong_thuc`) VALUES
-	(1, 'COD'),
-	(2, 'Chuyển khoản'),
-	(3, 'Ví điện tử');
+-- Data exporting was unselected.
 
--- Dumping data for table bookstore.publishers: ~0 rows (approximately)
-INSERT INTO `publishers` (`id_nha_xuat_ban`, `ten_nha_xuat_ban`, `dia_chi`, `so_dien_thoai`, `mo_ta`) VALUES
-	(1, 'nhà xuất bản con cò', '41, ấp L', '0334', 'pro');
+-- Dumping structure for table book_store.customers
+CREATE TABLE IF NOT EXISTS `customers` (
+  `cus_id` int(11) NOT NULL AUTO_INCREMENT,
+  `fullname` varchar(255) NOT NULL DEFAULT '0',
+  `phone_number` varchar(255) NOT NULL DEFAULT '0',
+  `address` varchar(255) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` tinyint(1) DEFAULT 1,
+  PRIMARY KEY (`cus_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table bookstore.users: ~0 rows (approximately)
+-- Data exporting was unselected.
+
+-- Dumping structure for table book_store.imports
+CREATE TABLE IF NOT EXISTS `imports` (
+  `import_id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `publisher_id` int(11) NOT NULL,
+  PRIMARY KEY (`import_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table book_store.import_details
+CREATE TABLE IF NOT EXISTS `import_details` (
+  `import_detail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `import_id` int(11) DEFAULT NULL,
+  `book_id` int(11) DEFAULT NULL,
+  `quantity` int(11) NOT NULL,
+  `import_price` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`import_detail_id`),
+  KEY `import` (`import_id`),
+  KEY `book` (`book_id`),
+  CONSTRAINT `book` FOREIGN KEY (`book_id`) REFERENCES `books` (`book_id`) ON DELETE SET NULL,
+  CONSTRAINT `import` FOREIGN KEY (`import_id`) REFERENCES `imports` (`import_id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table book_store.orders
+CREATE TABLE IF NOT EXISTS `orders` (
+  `order_id` int(11) NOT NULL AUTO_INCREMENT,
+  `cus_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `total_amount` decimal(10,2) NOT NULL,
+  `address` varchar(100) NOT NULL DEFAULT '',
+  `status_id` int(11) DEFAULT 1,
+  `payment_id` int(11) DEFAULT NULL,
+  `payment_status` enum('0','1') DEFAULT '0',
+  PRIMARY KEY (`order_id`),
+  KEY `order_payment` (`payment_id`),
+  KEY `cus` (`cus_id`),
+  KEY `status` (`status_id`),
+  CONSTRAINT `cus` FOREIGN KEY (`cus_id`) REFERENCES `customers` (`cus_id`) ON DELETE SET NULL,
+  CONSTRAINT `order_payment` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`payment_id`) ON DELETE SET NULL,
+  CONSTRAINT `status` FOREIGN KEY (`status_id`) REFERENCES `order_status` (`status_id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table book_store.order_details
+CREATE TABLE IF NOT EXISTS `order_details` (
+  `order_detail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) DEFAULT NULL,
+  `book_id` int(11) DEFAULT NULL,
+  `quantity` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`order_detail_id`),
+  KEY `order_id` (`order_id`),
+  KEY `book_id` (`book_id`),
+  CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
+  CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`book_id`) REFERENCES `books` (`book_id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table book_store.order_status
+CREATE TABLE IF NOT EXISTS `order_status` (
+  `status_id` int(11) NOT NULL AUTO_INCREMENT,
+  `status_name` varchar(100) NOT NULL,
+  PRIMARY KEY (`status_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table book_store.order_status_history
+CREATE TABLE IF NOT EXISTS `order_status_history` (
+  `history_id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) DEFAULT NULL,
+  `status_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`history_id`),
+  KEY `order_id` (`order_id`),
+  KEY `status_id` (`status_id`),
+  CONSTRAINT `order_status_history_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
+  CONSTRAINT `order_status_history_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `order_status` (`status_id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table book_store.payments
+CREATE TABLE IF NOT EXISTS `payments` (
+  `payment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `payment_name` varchar(100) NOT NULL,
+  PRIMARY KEY (`payment_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table book_store.publishers
+CREATE TABLE IF NOT EXISTS `publishers` (
+  `publisher_id` int(11) NOT NULL AUTO_INCREMENT,
+  `publisher_name` varchar(100) NOT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `status` tinyint(4) DEFAULT 1,
+  PRIMARY KEY (`publisher_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table book_store.users
+CREATE TABLE IF NOT EXISTS `users` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `fullname` varchar(100) DEFAULT NULL,
+  `role` enum('admin','manager','staff') DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `status` tinyint(4) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Data exporting was unselected.
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

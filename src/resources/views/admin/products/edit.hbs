@@ -1,6 +1,6 @@
 <div class="mt-4">
     <h3>Sửa sản phẩm</h3>
-    <form method="POST" action="/admin/products/{{product.book_id}}?_method=PUT" enctype="multipart/form-data">
+    <form method="POST" action="/admin/products/{{product.book_id}}?_method=PATCH" enctype="multipart/form-data">
         <div class="mb-3">
             <label class="form-label">Tên sách</label>
             <input type="text" class="form-control" name="book_title" required value="{{product.book_title}}">
@@ -43,8 +43,14 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Phần trăm lợi nhuận (%)</label>
+            <label class="form-label">Phần trăm giảm giá (%)</label>
             <input type="number" step="0.01" class="form-control" name="discount_percentage" value="{{product.discount_percentage}}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Phần trăm lợi nhuận (%)</label>
+            <input type="number" step="0.01" class="form-control" name="profit_percentage"
+                value="{{product.profit_percentage}}">
         </div>
 
         <div class="mb-3">

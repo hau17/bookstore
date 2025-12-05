@@ -1,0 +1,78 @@
+<h2>Lịch sử nhập sách</h2>
+
+<div class="mb-3 d-flex justify-content-between align-items-center">
+  <div>
+    <a href="/admin/imports/new" class="btn btn-success">Nhập hàng</a>
+  </div>
+</div>
+
+<table id="importsTable" class="display">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nhà xuất bản</th>
+      <th>Tổng số lượng</th>
+      <th>Tổng chi phí</th>
+      <th>Ngày</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each imports}}
+      <tr class="import__row--click" data-id="{{this.import_id}}">
+        <td>{{this.import_id}}</td>
+        <td>{{this.publisher_name}}</td>
+        <td>{{this.total_quantity}}</td>
+        <td>{{this.total_cost}}</td>
+        <td>{{formatDate this.created_date}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<!-- Modal chi tiết nhập hàng -->
+<div
+  class="modal fade"
+  id="modal-import-detail"
+  tabindex="-1"
+  aria-labelledby="detailImportLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="detailImportLabel">Chi tiết nhập</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div id="import-detail-header" class="mb-3"></div>
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Tên sách</th>
+              <th>Số lượng</th>
+              <th>Giá nhập</th>
+              <th>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody id="import-detail-rows"></tbody>
+        </table>
+        <div class="text-end fw-bold">Tổng:
+          <span id="import-detail-total"></span></div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/admin/imports_list.js"></script>

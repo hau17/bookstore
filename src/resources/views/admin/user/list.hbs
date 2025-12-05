@@ -1,0 +1,129 @@
+<h2>Quản lí nhân viên</h2>
+<a href="/admin/users/add"><button class="btn btn-primary">Thêm nhân viên</button></a>
+
+<!-- Bộ lọc -->
+<div class="row mb-3">
+  <div class="col-md-6">
+    <label for="user-role-filter" class="form-label">Lọc theo vai trò:</label>
+    <select id="user-role-filter" class="form-select select2">
+      <option value="" {{#unless roleFilter}}selected{{/unless}}>Tất cả</option>
+      <option value="admin" {{#if (eq roleFilter 'admin')}}selected{{/if}}>Admin</option>
+      <option value="manager" {{#if (eq roleFilter 'manager')}}selected{{/if}}>Manager</option>
+      <option value="staff" {{#if (eq roleFilter 'staff')}}selected{{/if}}>Staff</option>
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="user-status-filter" class="form-label">Lọc theo trạng thái:</label>
+    <select id="user-status-filter" class="form-select select2">
+      <option value="" {{#unless statusFilter}}selected{{/unless}}>Tất cả</option>
+      <option value="1" {{#if (eq statusFilter '1')}}selected{{/if}}>Đang hoạt động</option>
+      <option value="0" {{#if (eq statusFilter '0')}}selected{{/if}}>Đã khóa</option>
+    </select>
+  </div>
+</div>
+
+<table id="myTable" class="display">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Họ tên</th>
+            <th>Vai trò</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each users}}
+            <tr class="user__row--click"
+                data-id="{{this.user_id}}"
+                data-email="{{this.email}}"
+                data-fullname="{{this.fullname}}"
+                data-role="{{this.role}}"
+                data-status="{{this.status}}">
+                
+                <td>{{this.email}}</td>
+                <td>{{this.fullname}}</td>
+                <td>
+                    {{#if (eq this.role 'admin')}}
+                        Admin
+                    {{else if (eq this.role 'manager')}}
+                        Manager
+                    {{else}}
+                        Staff
+                    {{/if}}
+                </td>
+                <td>
+                    {{#if (eq this.status 1)}}
+                        Đang hoạt động
+                    {{else}}
+                        Đã khóa
+                    {{/if}}
+                </td>
+                <td class="d-flex gap-1">
+                    <a href="/admin/users/{{this.user_id}}/edit">
+                        <button class="btn btn-primary" data-id="{{this.user_id}}">Sửa</button>
+                    </a>
+                    
+                    {{#if (eq this.status 1)}}
+                        <button class="btn btn-warning btn-toggle-status" 
+                            data-id="{{this.user_id}}"
+                            data-name="{{this.email}}"
+                            data-status="{{this.status}}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#toggle-status-modal"
+                            data-type="users">Khóa
+                        </button>
+                    {{else}}
+                        <button class="btn btn-success btn-toggle-status" 
+                            data-id="{{this.user_id}}"
+                            data-name="{{this.email}}"
+                            data-status="{{this.status}}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#toggle-status-modal"
+                            data-type="users">Mở khóa
+                        </button>
+                    {{/if}}
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<!-- Modal chi tiết người dùng -->
+<div class="modal fade" id="modal-user-detail" tabindex="-1" aria-labelledby="detailUserLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="detailUserLabel">Chi tiết người dùng</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="col-form-label"><strong>ID:</strong></label>
+          <span id="detail-user-id"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Email:</strong></label>
+          <span id="detail-email"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Họ tên:</strong></label>
+          <span id="detail-fullname"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Vai trò:</strong></label>
+          <span id="detail-role"></span>
+        </div>
+        <div class="mb-3">
+          <label class="col-form-label"><strong>Trạng thái:</strong></label>
+          <span id="detail-status"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/admin/user.js"></script>

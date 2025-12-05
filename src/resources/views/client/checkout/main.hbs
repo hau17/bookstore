@@ -1,0 +1,66 @@
+<div class="container my-5">
+  <h2 class="mb-4">Thanh toán</h2>
+
+  <div class="row">
+    <div class="col-12 col-md-8 mb-3">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Giá</th>
+              <th>Số lượng</th>
+              <th>Tổng</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each products}}
+              <tr>
+                <td>{{this.book_title}}</td>
+                <td>{{formatPrice this.selling_price}} ₫</td>
+                <td>{{this.quantity}}</td>
+                <td>{{formatPrice (multiply this.selling_price this.quantity)}} ₫</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card p-3">
+        <h5>Thông tin khách hàng</h5>
+        <form method="POST" action="{{#if (eq mode 'cart')}}/checkout/cart{{else}}/checkout/buy/{{products.[0].book_id}}{{/if}}">
+
+          <div class="mb-3">
+            <label for="address" class="form-label">Địa chỉ giao hàng</label>
+            <input type="text" class="form-control" id="address" name="address" value="{{customer.address}}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="{{customer.phone_number}}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="paymentId" class="form-label">Phương thức thanh toán</label>
+            <select class="form-select" id="paymentId" name="paymentId" required>
+              <option value="1">Thanh toán trực tiếp</option>
+              <option value="2">Chuyển khoản</option>
+            </select>
+          </div>
+
+          <div class="mb-3 text-end">
+            <h5>Tổng tiền: {{formatPrice grandTotal}} ₫</h5>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Đặt hàng</button>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="/js/client/checkout.js"></script>

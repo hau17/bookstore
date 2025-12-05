@@ -31,15 +31,16 @@
   </thead>
   <tbody>
     {{#each orders}}
-      <tr class="admin-order-row"
-          data-id="{{this.order_id}}"
-          data-user-name="{{this.fullname}}"
-          data-address="{{this.address}}"
-          data-order-date="{{formatDate this.order_date}}"
-          data-total-amount="{{this.total_amount}}"
-          data-payment-name="{{this.payment_name}}"
-          data-payment-status="{{this.payment_status}}"
-          data-status-name="{{this.status_name}}">
+    <tr class="admin-order-row"
+      data-id="{{this.order_id}}"
+      data-user-name="{{this.fullname}}"
+      data-address="{{this.address}}"
+      data-order-date="{{formatDate this.order_date}}"
+      data-total-amount="{{this.total_amount}}"
+      data-payment-name="{{this.payment_name}}"
+      data-payment-status="{{this.payment_status}}"
+      data-status-name="{{this.status_name}}"
+      data-status-id="{{this.status_id}}">
           
         <td>{{this.order_id}}</td>
         <td>{{this.fullname}}</td>
@@ -68,7 +69,8 @@
           <button class="btn btn-primary btn-sm"
                   data-id="{{this.order_id}}"
                   data-bs-toggle="modal"
-                  data-bs-target="#admin-order-change-status-modal">
+                  data-bs-target="#admin-order-change-status-modal"
+                  {{#if (eq this.status_id 4)}}disabled{{/if}}>
             Đổi
           </button>
         </td>

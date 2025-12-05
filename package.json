@@ -15,14 +15,17 @@
   },
   "dependencies": {
     "bansach": "file:",
-    "bcryptjs": "^3.0.2",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.0",
     "connect-flash": "^0.1.1",
     "datatables.net-dt": "^2.3.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-flash": "^0.0.2",
     "express-handlebars": "^8.0.1",
     "express-session": "^1.18.2",
+    "handlebars-helpers": "^0.10.0",
     "method-override": "^3.0.0",
     "multer": "^2.0.0",
     "mysql2": "^3.14.1"

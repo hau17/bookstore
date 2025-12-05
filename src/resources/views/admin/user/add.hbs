@@ -1,0 +1,45 @@
+<div class="container">
+  <h2>Thêm nhân viên mới</h2>
+  <form action="/admin/users/add" method="POST">
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Mật khẩu</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        name="password"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="fullname" class="form-label">Họ tên</label>
+      <input
+        type="text"
+        class="form-control"
+        id="fullname"
+        name="fullname"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="role" class="form-label">Vai trò</label>
+      <select class="form-select" id="role" name="role" required>
+        <option value="staff">Staff</option>
+        <option value="manager">Manager</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Thêm</button>
+    <a href="/admin/users" class="btn btn-secondary">Hủy</a>
+  </form>
+</div>

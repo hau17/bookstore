@@ -1,0 +1,140 @@
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">
+        <i class="bi bi-bag"></i> Đơn hàng của tôi
+      </h5>
+    </div>
+    <div class="card-body">
+      <!-- Filter Section -->
+      <div class="mb-3">
+        <label for="customer-order-filter" class="form-label">Lọc đơn hàng:</label>
+        <select id="customer-order-filter" class="form-select">
+          <option value="" {{#unless filter}}selected{{/unless}}>Tất cả đơn hàng</option>
+          <option value="waiting" {{#if (eq filter 'waiting')}}selected{{/if}}>Chờ xác nhận</option>
+          <option value="preparing" {{#if (eq filter 'preparing')}}selected{{/if}}>Đang chuẩn bị hàng</option>
+          <option value="delivering" {{#if (eq filter 'delivering')}}selected{{/if}}>Đang giao</option>
+          <option value="delivered" {{#if (eq filter 'delivered')}}selected{{/if}}>Đã giao</option>
+          <option value="cancelled" {{#if (eq filter 'cancelled')}}selected{{/if}}>Bị hủy</option>
+        </select>
+      </div>
+
+      <!-- Orders Table -->
+      {{#if orders}}
+        <div class="table-responsive">
+          <table class="table table-hover" id="ordersTable">
+            <thead class="table-light">
+              <tr>
+                <th>Mã đơn hàng</th>
+                <th>Ngày đặt</th>
+                <th>Thành tiền</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each orders}}
+                <tr data-order-id="{{order_id}}" data-status-id="{{status_id}}" class="order-row">
+                  <td><strong>#{{order_id}}</strong></td>
+                  <td>{{formatDate order_date}}</td>
+                  <td><strong class="text-danger">{{formatPrice total_amount}}đ</strong></td>
+                  <td>
+                    <span class="badge bg-{{statusBadge status_id}}">
+                      {{status_name}}
+                    </span>
+                  </td>
+                  <td>
+                    <a href="/account/orders/{{order_id}}" class="btn btn-sm btn-info">
+                      <i class="bi bi-eye"></i> Chi tiết
+                    </a>
+                    {{#if (eq status_id 1)}}
+                      <button type="button" class="btn btn-sm btn-danger cancel-order-btn" data-order-id="{{order_id}}">
+                        <i class="bi bi-trash"></i> Hủy
+                      </button>
+                    {{/if}}
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      {{else}}
+        <div class="alert alert-info text-center">
+          <i class="bi bi-inbox"></i> Không có đơn hàng nào
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Xác nhận hủy đơn hàng</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn chắc chắn muốn hủy đơn hàng <strong id="cancelOrderId"></strong> này không?</p>
+        <p class="text-muted small">Lưu ý: Đơn hàng sẽ không thể khôi phục sau khi hủy.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+        <button type="button" class="btn btn-danger" id="confirmCancelBtn">Hủy đơn hàng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Filter change event
+    document.getElementById('customer-order-filter').addEventListener('change', function(e) {
+      const filter = e.target.value;
+      const url = filter ? `/account/orders?filter=${filter}` : '/account/orders';
+      window.location.href = url;
+    });
+
+    // Cancel order button
+    let currentOrderId = null;
+    const cancelModal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
+    const cancelBtn = document.getElementById('confirmCancelBtn');
+
+    document.querySelectorAll('.cancel-order-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        currentOrderId = this.dataset.orderId;
+        document.getElementById('cancelOrderId').textContent = '#' + currentOrderId;
+        cancelModal.show();
+      });
+    });
+
+    cancelBtn.addEventListener('click', async function() {
+      try {
+        const response = await fetch(`/account/orders/${currentOrderId}/cancel`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // Show success message
+          alert(data.message || 'Hủy đơn hàng thành công!');
+          // Reload page
+          window.location.reload();
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Hủy đơn hàng thất bại!');
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        alert('Có lỗi xảy ra!');
+      }
+      cancelModal.hide();
+    });
+  });
+</script>
+

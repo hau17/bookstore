@@ -1,30 +1,54 @@
-<div class="bg-dark text-white p-3 vh-100" style="width: 250px;">
-    <h4 class="mb-4">Quản trị</h4>
-    <ul class="nav flex-column">
-        <li class="nav-item mb-2">
-            <a href="/admin/products" class="nav-link text-white">Sản phẩm</a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="/admin/orders" class="nav-link text-white">Đơn hàng</a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="/admin/customers" class="nav-link text-white">Người dùng</a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="/admin/authors" class="nav-link text-white">Tác giả</a>
-        </li>
-         <li class="nav-item mb-2">
-            <a href="/admin/publishers" class="nav-link text-white">Nhà xuất bản</a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="/admin/categories" class="nav-link text-white">Loại sản phẩm</a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="/admin/imports" class="nav-link text-white">Nhập sách</a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="/admin/logout" class="nav-link text-white">Đăng xuất</a>
-        </li>
+<div class="bg-dark text-white p-3 vh-100 position-fixed" style="width: 250px;">
+  <h4 class="mb-4">Quản trị</h4>
+  <ul class="nav flex-column">
 
-    </ul>
+    {{! ROLE: admin + manager → xem sản phẩm }}
+    {{#if (or (eq user.role "admin") (eq user.role "manager"))}}
+      <li class="nav-item mb-2">
+        <a href="/admin/products" class="nav-link text-white">Sản phẩm</a>
+      </li>
+    {{/if}}
+
+    {{! ROLE: admin + staff → xem đơn hàng }}
+    {{#if (or (eq user.role "admin") (eq user.role "staff"))}}
+      <li class="nav-item mb-2">
+        <a href="/admin/orders" class="nav-link text-white">Đơn hàng</a>
+      </li>
+    {{/if}}
+
+    {{! ROLE: admin + manager → quản lý khách hàng }}
+    {{#if (or (eq user.role "admin") (eq user.role "manager"))}}
+      <li class="nav-item mb-2">
+        <a href="/admin/customers" class="nav-link text-white">Người dùng</a>
+      </li>
+
+      <li class="nav-item mb-2">
+        <a href="/admin/authors" class="nav-link text-white">Tác giả</a>
+      </li>
+
+      <li class="nav-item mb-2">
+        <a href="/admin/publishers" class="nav-link text-white">Nhà xuất bản</a>
+      </li>
+
+      <li class="nav-item mb-2">
+        <a href="/admin/categories" class="nav-link text-white">Loại sản phẩm</a>
+      </li>
+
+      <li class="nav-item mb-2">
+        <a href="/admin/imports" class="nav-link text-white">Nhập sách</a>
+      </li>
+    {{/if}}
+
+    {{! ROLE: admin → quản lý nhân viên }}
+    {{#if (eq user.role "admin")}}
+      <li class="nav-item mb-2">
+        <a href="/admin/users" class="nav-link text-white">Quản lí nhân viên</a>
+      </li>
+    {{/if}}
+
+    <li class="nav-item mb-2">
+      <a href="/admin/logout" class="nav-link text-white">Đăng xuất</a>
+    </li>
+
+  </ul>
 </div>
