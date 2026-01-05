@@ -2,11 +2,11 @@
 <a href="/admin/publishers/add"><button class="btn btn-primary">Thêm nhà xuất bản</button></a>
 <!-- Bộ lọc -->
 <div class="mb-3">
-  <label for="publisher-status-filter" class="form-label">Lọc nhà xuất bản:</label>
-  <select id="publisher-status-filter" class="form-select select2">
-    <option value="" {{#unless filter}}selected{{/unless}}>Tất cả</option>
-    <option value="active" {{#if (eq filter 'active')}}selected{{/if}}>Đang hoạt động</option>
-    <option value="inactive" {{#if (eq filter 'inactive')}}selected{{/if}}>Ngừng hoạt động</option>
+  <label for="publisher-status" class="form-label">Lọc nhà xuất bản:</label>
+  <select id="publisher-status" class="form-select select2">
+    <option value="" {{#unless status}}selected{{/unless}}>Tất cả</option>
+    <option value="1" {{#if (eq status '1')}}selected{{/if}}>Đang hoạt động</option>
+    <option value="0" {{#if (eq status '0')}}selected{{/if}}>Ngừng hoạt động</option>
   </select>
 </div>
 
@@ -17,7 +17,7 @@
             <th>Tên NXB</th>
             <th>Địa chỉ</th>
             <th>Số điện thoại</th>
-            <th>Mô tả</th>
+            <th>Email</th>
             <th>Trạng thái</th>
             <th>Thao tác</th>
         </tr>
@@ -29,13 +29,14 @@
                 data-name="{{this.publisher_name}}"
                 data-address="{{this.address}}"
                 data-phone="{{this.phone_number}}"
+                data-email="{{this.email}}"
                 data-description="{{this.description}}"
                 data-status="{{this.status}}">
                 <td>{{this.publisher_id}}</td>
                 <td>{{this.publisher_name}}</td>
                 <td class="text-truncate" style="max-width: 200px;">{{this.address}}</td>
                 <td>{{this.phone_number}}</td>
-                <td class="text-truncate" style="max-width: 200px;">{{this.description}}</td>
+                <td>{{this.email}}</td>
                 <td>{{#if (eq this.status "1")}}Hoạt động{{else}}Ngừng hoạt động{{/if}}</td>
                 <td>
                     <a href="/admin/publishers/{{this.publisher_id}}/edit">
@@ -43,21 +44,16 @@
                     </a>
                     <!-- Nút khóa/mở khóa -->
                     {{#if (eq this.status "1")}}
-                        <button class="btn btn-warning toggle-status-btn" 
+                        <button class="btn btn-warning btn-toggle-status" 
                         data-id="{{this.publisher_id}}" 
-                        data-name="{{this.publisher_name}}"
                         data-status="{{this.status}}"
-                        data-bs-toggle="modal"
-                        data-bs-target="#toggle-status-modal"
                         data-type="publishers">Khóa</button>
                     {{else}}
-                        <button class="btn btn-success toggle-status-btn" 
+                        <button class="btn btn-success btn-toggle-status" 
                         data-id="{{this.publisher_id}}" 
                         data-name="{{this.publisher_name}}"
                         data-status="{{this.status}}"
-                        data-bs-toggle="modal"
-                        data-bs-target="#toggle-status-modal"
-                        data-type="publishers">Mở khóa</button>
+                        data-type="publishers">Mở</button>
                     {{/if}}
                 </td>
             </tr>
@@ -90,6 +86,9 @@
                     <label class="col-form-label"><strong>Số điện thoại:</strong></label>
                     <span id="detail-publisher-phone"></span>
                 </div>
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>Email:</strong></label>
+                    <span id="detail-publisher-email"></span>
                 <div class="mb-3">
                     <label class="col-form-label"><strong>Mô tả:</strong></label>
                     <span id="detail-publisher-description" class="d-block text-pre-wrap text-break"></span>

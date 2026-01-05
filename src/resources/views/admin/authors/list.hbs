@@ -1,11 +1,11 @@
 <h2>Quản lý tác giả</h2>
 <a href="/admin/authors/add"><button class="btn btn-primary">Thêm tác giả</button></a>
 <div class="mb-3">
-  <label for="author-status-filter" class="form-label">Lọc tác giả:</label>
-  <select id="author-status-filter" class="form-select select2">
-    <option value="" {{#unless filter}}selected{{/unless}}>Tất cả</option>
-    <option value="active" {{#if (eq filter 'active')}}selected{{/if}}>Đang hoạt động</option>
-    <option value="inactive" {{#if (eq filter 'inactive')}}selected{{/if}}>Ngừng hoạt động</option>
+  <label for="author-status" class="form-label">Lọc tác giả:</label>
+  <select id="author-status" class="form-select select2">
+    <option value="" {{#unless status}}selected{{/unless}}>Tất cả</option>
+    <option value="1" {{#if (eq status '1')}}selected{{/if}}>Đang hoạt động</option>
+    <option value="0" {{#if (eq status '0')}}selected{{/if}}>Ngừng hoạt động</option>
   </select>
 </div>
 
@@ -14,7 +14,7 @@
         <tr> 
             <th>ID</th>
             <th>Tên tác giả</th>
-            <th>Mô tả</th>
+            <th>email</th>
             <th>Trạng thái</th>
             <th>Thao tác</th>
         </tr>
@@ -24,10 +24,11 @@
             <tr class="author-row" 
                 data-id="{{this.author_id}}"
                 data-name="{{this.author_name}}"
+                data-email="{{this.email}}"
                 data-description="{{this.description}}">
                 <td>{{this.author_id}}</td>
                 <td>{{this.author_name}}</td>
-                <td class="text-truncate" style="max-width: 200px;">{{this.description}}</td>
+                <td>{{this.email}}</td>
                 <td>
                     {{#if (eq this.status '1')}}
                         <span >Đang hoạt động</span>
@@ -43,10 +44,7 @@
                     <!-- Nếu tác giả đang hoạt động thì cho phép Khóa -->
                     <button class="btn btn-warning btn-toggle-status" 
                         data-id="{{this.author_id}}"
-                        data-name="{{this.author_name}}"
                         data-status="{{this.status}}"
-                        data-bs-toggle="modal"
-                        data-bs-target="#toggle-status-modal"
                         data-type="authors">
                         Khóa
                     </button>
@@ -54,10 +52,7 @@
                     <!-- Nếu tác giả đã ngừng hoạt động thì cho phép Mở khóa -->
                     <button class="btn btn-success btn-toggle-status" 
                         data-id="{{this.author_id}}"
-                        data-name="{{this.author_name}}"
                         data-status="{{this.status}}"
-                        data-bs-toggle="modal"
-                        data-bs-target="#toggle-status-modal"
                         data-type="authors">
                         Mở
                     </button>
@@ -84,6 +79,10 @@
                 <div class="mb-3">
                     <label class="col-form-label"><strong>Tên tác giả:</strong></label>
                     <span id="detail-author-name"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label"><strong>Email:</strong></label>
+                    <span id="detail-author-email"></span>
                 </div>
                 <div class="mb-3">
                     <label class="col-form-label"><strong>Mô tả:</strong></label>

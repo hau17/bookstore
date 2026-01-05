@@ -1,16 +1,16 @@
 <!-- Bộ lọc -->
-{{!-- <h2 id="order-title">Quản lý đơn hàng</h2> --}}
+<h2 id="order-title">Quản lý đơn hàng</h2>
 
 <!-- Bộ lọc -->
 <div class="mb-3">
-  <label for="admin-order-filter" class="form-label">Lọc đơn hàng:</label>
-  <select id="admin-order-filter" class="form-select select2">
-    <option value="" {{#unless filter}}selected{{/unless}}>Tất cả</option>
-    <option value="waiting" {{#if (eq filter 'waiting')}}selected{{/if}}>Chờ xác nhận</option>
-    <option value="preparing" {{#if (eq filter 'preparing')}}selected{{/if}}>Đang chuẩn bị hàng</option>
-    <option value="delivering" {{#if (eq filter 'delivering')}}selected{{/if}}>Đang giao</option>
-    <option value="delivered" {{#if (eq filter 'delivered')}}selected{{/if}}>Đã giao</option>
-    <option value="cancelled" {{#if (eq filter 'cancelled')}}selected{{/if}}>Bị hủy</option>
+  <label for="admin-order-status" class="form-label">Lọc đơn hàng:</label>
+  <select id="admin-order-status" class="form-select select2">
+    <option value="" {{#unless status}}selected{{/unless}}>Tất cả</option>
+    <option value="1" {{#if (eq status '1')}}selected{{/if}}>Chờ xác nhận</option>
+    <option value="2" {{#if (eq status '2')}}selected{{/if}}>Đang chuẩn bị hàng</option>
+    <option value="3" {{#if (eq status '3')}}selected{{/if}}>Đang giao</option>
+    <option value="4" {{#if (eq status '4')}}selected{{/if}}>Đã giao</option>
+    <option value="5" {{#if (eq status '5')}}selected{{/if}}>Bị hủy</option>
   </select>
 </div>
 
@@ -35,7 +35,7 @@
       data-id="{{this.order_id}}"
       data-user-name="{{this.fullname}}"
       data-address="{{this.address}}"
-      data-order-date="{{formatDate this.order_date}}"
+      data-order-date="{{formatDate this.created_at}}"
       data-total-amount="{{this.total_amount}}"
       data-payment-name="{{this.payment_name}}"
       data-payment-status="{{this.payment_status}}"
@@ -44,7 +44,7 @@
           
         <td>{{this.order_id}}</td>
         <td>{{this.fullname}}</td>
-        <td>{{formatDate this.order_date}}</td>
+        <td>{{formatDate this.created_at}}</td>
         <td>{{this.total_amount}}</td>
         
         <!-- Cột phương thức -->
@@ -56,21 +56,19 @@
           {{#if (eq this.payment_status '0')}}Chưa TT{{else}}Đã TT{{/if}}
         </td>
         <td>
-          <button class="btn btn-secondary btn-sm"
-                  data-id="{{this.order_id}}"
-                  data-bs-toggle="modal"
-                  data-bs-target="#admin-order-change-payment-status-modal">
+          <button class="btn btn-sm btn-info btn-change-payment"
+            data-id="{{this.order_id}}">
             Đổi
           </button>
         </td>
         <!-- Cột trạng thái đơn hàng -->
         <td>{{this.status_name}}</td>
         <td>
-          <button class="btn btn-primary btn-sm"
-                  data-id="{{this.order_id}}"
-                  data-bs-toggle="modal"
-                  data-bs-target="#admin-order-change-status-modal"
-                  {{#if (eq this.status_id 4)}}disabled{{/if}}>
+          <button
+            class="btn btn-sm btn-warning btn-change-status"
+            data-id="{{this.order_id}}"
+            data-status="{{this.status_id}}"
+          >
             Đổi
           </button>
         </td>
@@ -79,57 +77,6 @@
   </tbody>
 </table>
 
-
-<!-- Modal thay đổi trạng thái đơn hàng -->
-<div class="modal fade" id="admin-order-change-status-modal" tabindex="-1" aria-labelledby="admin-order-change-status-label" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="admin-order-change-status-label">Thay đổi trạng thái đơn hàng</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="admin-order-change-status-form">
-          <input type="hidden" id="admin-order-id" name="order_id">
-          <div class="mb-3">
-            <label for="admin-order-status-id" class="form-label">Chọn trạng thái</label>
-            <select id="admin-order-status-id" name="status_id" class="form-select">
-              {{#each statuses}}
-                <option value="{{this.status_id}}">{{this.status_name}}</option>
-              {{/each}}
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Cập nhật</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-{{!-- modal thay đổi trạng thái thanh toán đơn hàng --}}
-<div class="modal fade" id="admin-order-change-payment-status-modal" tabindex="-1" aria-labelledby="admin-order-change-payment-status-label" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="admin-order-change-payment-status-label">Thay đổi trạng thái thanh toán đơn hàng</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="admin-order-change-payment-status-form">
-          <input type="hidden" id="admin-order-payment-status-id" name="order_id">
-          <div class="mb-3">
-            <label for="admin-order-payment-status" class="form-label">Chọn trạng thái thanh toán</label>
-            <select id="admin-order-payment-status" name="payment_status" class="form-select">
-              <li><option value="0">Chưa thanh toán</option></li>
-              <li><option value="1">Đã thanh toán</option></li>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Cập nhật</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 <!-- Modal chi tiết đơn hàng -->
 <div class="modal fade" id="admin-order-detail-modal" tabindex="-1" aria-labelledby="admin-order-detail-label" aria-hidden="true">
   <div class="modal-dialog modal-lg">

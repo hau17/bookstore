@@ -1,20 +1,19 @@
 const db = require("../../config/db.js");
-exports.getAll = async (filter) => {
+exports.getAll = async ({ status }) => {
   let sql = `
       SELECT 
         publisher_id,
         publisher_name,
         address,
         phone_number,
+        email,
         description,
         status
       FROM publishers
     `;
 
-  if (filter == "active") {
-    sql += ` WHERE status = 1`;
-  } else if (filter == "inactive") {
-    sql += ` WHERE status = 0`;
+  if (status === "1" || status === "0") {
+    sql += ` WHERE status = ${status} `;
   }
   try {
     const [publishers] = await db.query(sql);
@@ -47,13 +46,14 @@ exports.getById = async (id) => {
 
 exports.add = async (publisher) => {
   const sql = `
-    INSERT INTO publishers (publisher_name, address, phone_number, description)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO publishers (publisher_name, address, phone_number, email, description)
+    VALUES (?, ?, ?, ?, ?)
   `;
   const values = [
     publisher.publisher_name,
     publisher.address,
     publisher.phone_number,
+    publisher.email,
     publisher.description,
   ];
   try {
@@ -68,13 +68,14 @@ exports.add = async (publisher) => {
 exports.update = async (publisher) => {
   const sql = `
     UPDATE publishers
-    SET publisher_name = ?, address = ?, phone_number = ?, description = ?, status = ?
+    SET publisher_name = ?, address = ?, phone_number = ?, email = ?, description = ?, status = ?
     WHERE publisher_id = ?
   `;
   const values = [
     publisher.publisher_name,
     publisher.address,
     publisher.phone_number,
+    publisher.email,
     publisher.description,
     1,
     publisher.publisher_id,

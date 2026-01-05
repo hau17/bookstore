@@ -2,31 +2,43 @@ const publisherService = require("../../services/admin/publisher_service.js");
 
 exports.list = async (req, res) => {
   try {
-    const filter = req.query.filter || "";
+    const status = req.query.status || "";
 
-    const publishers = await publisherService.getAll(filter);
+    const publishers = await publisherService.getAll({ status: status });
 
     res.render("admin/publishers/list", {
       publishers,
       layout: "main-admin",
       title: "Quản lý nhà xuất bản",
-      filter: filter, // Giữ lại chuỗi để hiển thị trạng thái bộ lọc trên View
+      status: status, // Giữ lại chuỗi để hiển thị trạng thái bộ lọc trên View
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải danh sách nhà xuất bản",
+    };
+    res.redirect("/admin");
   }
 };
 exports.getById = async (req, res) => {
   try {
     const publisher = await publisherService.getById(req.params.id);
     if (!publisher) {
-      return res.status(404).send("Nhà xuất bản không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Nhà xuất bản không tồn tại",
+      };
+      return res.redirect("/admin/publishers");
     }
     res.json(publisher);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải thông tin nhà xuất bản",
+    };
+    res.redirect("/admin/publishers");
   }
 };
 
@@ -38,23 +50,30 @@ exports.showAddForm = async (req, res) => {
     });
   } catch (error) {
     console.error("Error showing add form:", error);
-    return res.status(500).json({ error: "Failed to load add form" });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi hiển thị form thêm nhà xuất bản",
+    };
+    res.redirect("/admin/publishers");
   }
 };
 
 exports.add = async (req, res) => {
   try {
-    const { publisher_name, address, phone_number, description, status } =
-      req.body;
-
-    if (!publisher_name) {
-      return res.status(400).json({ error: "Tên nhà xuất bản là bắt buộc" });
-    }
+    const {
+      publisher_name,
+      address,
+      phone_number,
+      email,
+      description,
+      status,
+    } = req.body;
 
     const publisher = {
       publisher_name,
       address,
       phone_number,
+      email,
       description,
       status,
     };
@@ -67,9 +86,11 @@ exports.add = async (req, res) => {
     res.redirect("/admin/publishers");
   } catch (error) {
     console.error("Error adding publisher:", error);
-    return res
-      .status(500)
-      .json({ error: "Database insert failed: " + error.message });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi thêm nhà xuất bản",
+    };
+    res.redirect("/admin/publishers/add");
   }
 };
 
@@ -77,7 +98,11 @@ exports.showEditForm = async (req, res) => {
   try {
     const publisher = await publisherService.getById(req.params.id);
     if (!publisher) {
-      return res.status(404).send("Nhà xuất bản không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Nhà xuất bản không tồn tại",
+      };
+      return res.redirect("/admin/publishers");
     }
     res.render("admin/publishers/edit", {
       layout: "main-admin",
@@ -86,18 +111,31 @@ exports.showEditForm = async (req, res) => {
     });
   } catch (error) {
     console.error("Error showing edit form:", error);
-    return res.status(500).json({ error: "Failed to load edit form" });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải thông tin nhà xuất bản",
+    };
+    res.redirect("/admin/publishers");
   }
 };
 
 exports.update = async (req, res) => {
   try {
     const publisherId = req.params.id;
-    const { publisher_name, address, phone_number, description, status } =
-      req.body;
-
+    const {
+      publisher_name,
+      address,
+      phone_number,
+      email,
+      description,
+      status,
+    } = req.body;
     if (!publisher_name) {
-      return res.status(400).json({ error: "Tên nhà xuất bản là bắt buộc" });
+      req.session.toastr = {
+        type: "error",
+        message: "Tên nhà xuất bản là bắt buộc",
+      };
+      return res.redirect(`/admin/publishers/${publisherId}/edit`);
     }
 
     const publisher = {
@@ -105,13 +143,18 @@ exports.update = async (req, res) => {
       publisher_name,
       address,
       phone_number,
+      email,
       description,
       status,
     };
 
     const affectedRows = await publisherService.update(publisher);
     if (affectedRows === 0) {
-      return res.status(404).send("Nhà xuất bản không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Nhà xuất bản không tồn tại",
+      };
+      return res.redirect("/admin/publishers");
     }
     req.session.toastr = {
       type: "success",
@@ -120,9 +163,11 @@ exports.update = async (req, res) => {
     res.redirect("/admin/publishers");
   } catch (error) {
     console.error("Error updating publisher:", error);
-    return res
-      .status(500)
-      .json({ error: "Database update failed: " + error.message });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi cập nhật nhà xuất bản",
+    };
+    res.redirect(`/admin/publishers/${req.params.id}/edit`);
   }
 };
 
@@ -131,7 +176,11 @@ exports.toggleStatus = async (req, res) => {
     const publisherId = req.params.id;
     const result = await publisherService.toggleStatus(publisherId);
     if (result.affectedRows === 0) {
-      return res.status(404).send("Nhà xuất bản không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Nhà xuất bản không tồn tại",
+      };
+      return res.redirect("/admin/publishers");
     }
     req.session.toastr = {
       type: "success",
@@ -140,8 +189,10 @@ exports.toggleStatus = async (req, res) => {
     res.redirect("/admin/publishers");
   } catch (error) {
     console.error("Error toggling publisher status:", error);
-    return res
-      .status(500)
-      .json({ error: "Database update failed: " + error.message });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi cập nhật trạng thái nhà xuất bản",
+    };
+    res.redirect("/admin/publishers");
   }
 };

@@ -3,17 +3,15 @@
 
 <!-- Bộ lọc -->
 <div class="mb-3">
-  <label for="product-status-filter" class="form-label">Lọc sản phẩm:</label>
-  <select id="product-status-filter" class="form-select select2">
-    <option value="" {{#unless filter}}selected{{/unless}}>Tất cả</option>
-    <option value="active" {{#if (eq filter 'active')}}selected{{/if}}>Đang bán</option>
-    <option value="inactive" {{#if (eq filter 'inactive')}}selected{{/if}}>Ngừng bán</option>
+  <label for="product-status" class="form-label">Lọc sản phẩm:</label>
+  <select id="product-status" class="form-select select2">
+    <option value="" {{#unless status}}selected{{/unless}}>Tất cả</option>
+    <option value="1" {{#if (eq status '1')}}selected{{/if}}>Đang bán</option>
+    <option value="0" {{#if (eq status '0')}}selected{{/if}}>Ngừng bán</option>
   </select>
 </div>
 
-
-
-<table id="myTable" class="display">
+<table id="productTable" class="display">
     <thead>
         <tr> 
             <th>Tên sách</th>
@@ -21,10 +19,7 @@
             <th>Nhà xuất bản</th>
             <th>Số lượng</th>
             <th>Giá (avg import)</th>
-            <th>Giảm giá (%)</th>
-            <th>Lợi nhuận (%)</th>
             <th>Ngày tạo</th>
-            <th>Mô tả</th>
             <th>Trạng thái</th>
             <th>Thao tác</th>
         </tr>
@@ -48,14 +43,11 @@
                 
                 <!-- Các cột chính -->
                 <td class="text-truncate" style="max-width: 200px;">{{this.book_title}}</td>
-                <td>{{this.author_name}}</td>
-                <td>{{this.publisher_name}}</td>
+                <td class="text-truncate" style="max-width: 200px;">{{this.author_name}}</td>
+                <td class="text-truncate" style="max-width: 200px;">{{this.publisher_name}}</td>
                 <td>{{this.stock_quantity}}</td>
                 <td>{{this.avg_import_price}}</td>
-                <td>{{this.discount_percentage}}%</td>
-                <td>{{this.profit_percentage}}%</td>
                 <td>{{formatDate this.created_date}}</td>
-                <td class="text-truncate" style="max-width: 200px;">{{this.description}}</td>
 
                 <!-- Cột trạng thái -->
                 <td>
@@ -73,23 +65,15 @@
                     </a>
                     
                     {{#if (eq this.status 1)}}
-                        <!-- Nếu đang bán thì cho phép Khóa -->
                         <button class="btn btn-warning btn-toggle-status" 
                             data-id="{{this.book_id}}"
-                            data-name="{{this.book_title}}"
                             data-status="{{this.status}}"
-                            data-bs-toggle="modal"
-                            data-bs-target="#toggle-status-modal"
                             data-type="products">Khóa
                         </button>
                     {{else}}
-                        <!-- Nếu đã ngừng bán thì cho phép Mở khóa -->
                         <button class="btn btn-success btn-toggle-status" 
                             data-id="{{this.book_id}}"
-                            data-name="{{this.book_title}}"
                             data-status="{{this.status}}"
-                            data-bs-toggle="modal"
-                            data-bs-target="#toggle-status-modal"
                             data-type="products">Mở
                         </button>
                     {{/if}}

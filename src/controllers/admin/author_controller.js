@@ -1,24 +1,23 @@
 const authorService = require("../../services/admin/author_service.js");
 
 exports.list = async (req, res) => {
-  const filter = req.query.filter || "";
+  const status = req.query.status || "";
   let title = "Quản lý tác giả";
-  if (filter === "active") {
-    title += " - Đang hoạt động";
-  } else if (filter === "inactive") {
-    title += " - Ngừng hoạt động";
-  }
   try {
-    const authors = await authorService.getAll(filter);
+    const authors = await authorService.getAll({ status: status });
     res.render("admin/authors/list", {
       authors,
       layout: "main-admin",
       title,
-      filter,
+      status: status,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải danh sách tác giả",
+    };
+    res.redirect("/admin");
   }
 };
 
@@ -26,12 +25,20 @@ exports.getById = async (req, res) => {
   try {
     const author = await authorService.getById(req.params.id);
     if (!author) {
-      return res.status(404).send("Tác giả không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Tác giả không tồn tại",
+      };
+      return res.redirect("/admin/authors");
     }
     res.json(author);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải thông tin tác giả",
+    };
+    res.redirect("/admin/authors");
   }
 };
 
@@ -43,20 +50,29 @@ exports.showAddForm = async (req, res) => {
     });
   } catch (error) {
     console.error("Error showing add form:", error);
-    return res.status(500).json({ error: "Failed to load add form" });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi hiển thị form thêm tác giả",
+    };
+    res.redirect("/admin/authors");
   }
 };
 
 exports.add = async (req, res) => {
   try {
-    const { author_name, description } = req.body;
+    const { author_name, email, description } = req.body;
 
     if (!author_name) {
-      return res.status(400).json({ error: "Tên tác giả là bắt buộc" });
+      req.session.toastr = {
+        type: "error",
+        message: "Tên tác giả là bắt buộc",
+      };
+      return res.redirect("/admin/authors/add");
     }
 
     const author = {
       author_name,
+      email,
       description,
     };
 
@@ -68,9 +84,11 @@ exports.add = async (req, res) => {
     res.redirect("/admin/authors");
   } catch (error) {
     console.error("Error adding author:", error);
-    return res
-      .status(500)
-      .json({ error: "Database insert failed: " + error.message });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi thêm tác giả",
+    };
+    res.redirect("/admin/authors");
   }
 };
 
@@ -78,7 +96,11 @@ exports.showEditForm = async (req, res) => {
   try {
     const author = await authorService.getById(req.params.id);
     if (!author) {
-      return res.status(404).send("Tác giả không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Tác giả không tồn tại",
+      };
+      return res.redirect("/admin/authors");
     }
     res.render("admin/authors/edit", {
       layout: "main-admin",
@@ -87,28 +109,41 @@ exports.showEditForm = async (req, res) => {
     });
   } catch (error) {
     console.error("Error showing edit form:", error);
-    return res.status(500).json({ error: "Failed to load edit form" });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi hiển thị form sửa tác giả",
+    };
+    res.redirect("/admin/authors");
   }
 };
 
 exports.update = async (req, res) => {
   try {
     const authorId = req.params.id;
-    const { author_name, description } = req.body;
+    const { author_name, email, description } = req.body;
 
     if (!author_name) {
-      return res.status(400).json({ error: "Tên tác giả là bắt buộc" });
+      req.session.toastr = {
+        type: "error",
+        message: "Tên tác giả là bắt buộc",
+      };
+      return res.redirect("/admin/authors/edit/" + authorId);
     }
 
     const author = {
       author_name,
+      email,
       description,
       author_id: authorId,
     };
 
     const affectedRows = await authorService.update(author);
     if (affectedRows === 0) {
-      return res.status(404).send("Tác giả không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Tác giả không tồn tại",
+      };
+      return res.redirect("/admin/authors");
     }
     req.session.toastr = {
       type: "success",
@@ -117,9 +152,11 @@ exports.update = async (req, res) => {
     res.redirect("/admin/authors");
   } catch (error) {
     console.error("Error updating author:", error);
-    return res
-      .status(500)
-      .json({ error: "Database update failed: " + error.message });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi cập nhật tác giả",
+    };
+    res.redirect("/admin/authors");
   }
 };
 
@@ -128,7 +165,11 @@ exports.toggleStatus = async (req, res) => {
     const authorId = req.params.id;
     const affectedRows = await authorService.toggleStatus(authorId);
     if (affectedRows === 0) {
-      return res.status(404).send("Tác giả không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Tác giả không tồn tại",
+      };
+      return res.redirect("/admin/authors");
     }
     req.session.toastr = {
       type: "success",
@@ -137,8 +178,10 @@ exports.toggleStatus = async (req, res) => {
     res.redirect("/admin/authors");
   } catch (error) {
     console.error("Error toggling author status:", error);
-    return res
-      .status(500)
-      .json({ error: "Database update failed: " + error.message });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi cập nhật trạng thái tác giả",
+    };
+    res.redirect("/admin/authors");
   }
 };

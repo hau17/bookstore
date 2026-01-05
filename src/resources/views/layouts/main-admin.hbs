@@ -9,6 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <link href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  
   <link rel="stylesheet" href="/css/sidebar.css">
 </head>
 
@@ -29,18 +30,27 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
   {{!-- Toastr notify --}}
-  {{#if toastr}}
-  <script>
-      toastr.options = {
-        closeButton: true,
-        progressBar: true,
-        positionClass: "toast-bottom-right"
-      };
-      toastr["{{toastr.type}}"](`{{toastr.message}}`);
-  </script>
-  {{/if}}
+
+<script>
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: "toast-bottom-right",
+    timeOut: 3000,
+    extendedTimeOut: 1000,
+    preventDuplicates: true
+  };
+</script>
+
+{{#if toastr}}
+<script>
+  toastr["{{toastr.type}}"](`{{toastr.message}}`);
+</script>
+{{/if}}
 
   <script src="/js/admin/common-modal.js"></script>
 

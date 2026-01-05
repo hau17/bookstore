@@ -1,6 +1,6 @@
 const db = require("../../config/db.js");
 
-exports.getAll = async (filter = "") => {
+exports.getAll = async ({ status }) => {
   let sql = `
     SELECT 
       o.order_id,
@@ -18,22 +18,16 @@ exports.getAll = async (filter = "") => {
     JOIN payments p ON o.payment_id = p.payment_id
     JOIN customers u ON o.cus_id = u.cus_id
   `;
-  let values = [];
+  let param = [];
 
-  if (filter === "preparing") {
-    sql += " WHERE o.status_id = 2";
-  } else if (filter === "delivering") {
-    sql += " WHERE o.status_id = 3";
-  } else if (filter === "delivered") {
-    sql += " WHERE o.status_id = 4";
-  } else if (filter === "cancelled") {
-    sql += " WHERE o.status_id = 5";
-  } else if (filter === "waiting") {
-    sql += " WHERE o.status_id = 1";
+  if (status !== undefined && status !== "") {
+    sql += " WHERE o.status_id = ? ";
+    param.push(status);
   }
+  sql += " ORDER BY o.created_at DESC";
 
   try {
-    const [orders] = await db.query(sql, values);
+    const [orders] = await db.query(sql, param);
     return orders;
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -80,8 +74,17 @@ exports.updateStatus = async (orderId, statusId) => {
     const currentStatus = Number(orderRows[0].status_id);
 
     // If already cancelled (5), do not allow further changes
-    if (currentStatus === 5) {
-      throw new Error("Đơn hàng đã bị hủy, không thể thay đổi trạng thái");
+    const allowedTransitions = {
+      1: [2, 5],
+      2: [3, 5],
+      3: [4],
+    };
+
+    if (!allowedTransitions[currentStatus]?.includes(Number(statusId))) {
+      throw new Error("Không được chuyển trạng thái không hợp lệ");
+    }
+    if ([4, 5].includes(currentStatus)) {
+      throw new Error("Đơn hàng đã kết thúc, không thể thay đổi trạng thái");
     }
 
     // Cập nhật trạng thái đơn hàng
@@ -93,8 +96,8 @@ exports.updateStatus = async (orderId, statusId) => {
     // Thêm lịch sử trạng thái
     await db.query(insertHistorySql, [orderId, statusId]);
 
-    // Nếu trạng thái mới là HỦY (4) thì hoàn lại số lượng hàng
-    if (Number(statusId) === 4) {
+    // Nếu trạng thái mới là HỦY (5) thì hoàn lại số lượng hàng
+    if (Number(statusId) === 5) {
       // Lấy chi tiết đơn hàng
       const [details] = await db.query(
         "SELECT book_id, quantity FROM order_details WHERE order_id = ?",

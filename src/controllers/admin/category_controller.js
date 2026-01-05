@@ -2,17 +2,21 @@ const categoryService = require("../../services/admin/category_service.js");
 
 exports.list = async (req, res) => {
   try {
-    const filter = req.query.filter || "";
-    const categories = await categoryService.getAll(filter);
+    const status = req.query.status || "";
+    const categories = await categoryService.getAll({ status: status });
     res.render("admin/categories/list", {
       categories,
       layout: "main-admin",
       title: "Quản lý loại sản phẩm",
-      filter,
+      status,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải danh sách loại sản phẩm",
+    };
+    res.redirect("/admin");
   }
 };
 
@@ -24,7 +28,11 @@ exports.showAddForm = async (req, res) => {
     });
   } catch (error) {
     console.error("Error showing add form:", error);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi hiển thị form thêm loại sản phẩm",
+    };
+    res.redirect("/admin/categories");
   }
 };
 
@@ -33,7 +41,11 @@ exports.add = async (req, res) => {
     const { category_name, description } = req.body;
 
     if (!category_name) {
-      return res.status(400).json({ error: "Tên loại sản phẩm là bắt buộc" });
+      req.session.toastr = {
+        type: "error",
+        message: "Tên loại sản phẩm là bắt buộc",
+      };
+      return res.redirect("/admin/categories/add");
     }
 
     const category = { category_name, description };
@@ -45,7 +57,11 @@ exports.add = async (req, res) => {
     res.redirect("/admin/categories");
   } catch (error) {
     console.error("Error adding category:", error);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi thêm loại sản phẩm",
+    };
+    res.redirect("/admin/categories");
   }
 };
 
@@ -53,7 +69,11 @@ exports.showEditForm = async (req, res) => {
   try {
     const category = await categoryService.getById(req.params.id);
     if (!category) {
-      return res.status(404).send("Loại sản phẩm không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Loại sản phẩm không tồn tại",
+      };
+      return res.redirect("/admin/categories");
     }
     res.render("admin/categories/edit", {
       layout: "main-admin",
@@ -62,7 +82,11 @@ exports.showEditForm = async (req, res) => {
     });
   } catch (error) {
     console.error("Error showing edit form:", error);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi hiển thị form sửa loại sản phẩm",
+    };
+    res.redirect("/admin/categories");
   }
 };
 
@@ -72,7 +96,11 @@ exports.update = async (req, res) => {
     const { category_name, description, status } = req.body;
 
     if (!category_name) {
-      return res.status(400).json({ error: "Tên loại sản phẩm là bắt buộc" });
+      req.session.toastr = {
+        type: "error",
+        message: "Tên loại sản phẩm là bắt buộc",
+      };
+      return res.redirect(`/admin/categories/edit/${categoryId}`);
     }
 
     const category = {
@@ -83,7 +111,11 @@ exports.update = async (req, res) => {
     };
     const affectedRows = await categoryService.update(category);
     if (affectedRows === 0) {
-      return res.status(404).send("Loại sản phẩm không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Loại sản phẩm không tồn tại",
+      };
+      return res.redirect("/admin/categories");
     }
     req.session.toastr = {
       type: "success",
@@ -92,7 +124,11 @@ exports.update = async (req, res) => {
     res.redirect("/admin/categories");
   } catch (error) {
     console.error("Error updating category:", error);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi cập nhật loại sản phẩm",
+    };
+    res.redirect("/admin/categories");
   }
 };
 
@@ -101,7 +137,11 @@ exports.toggleStatus = async (req, res) => {
     const categoryId = req.params.id;
     const result = await categoryService.toggleStatus(categoryId);
     if (result === 0) {
-      return res.status(404).send("Loại sản phẩm không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Loại sản phẩm không tồn tại",
+      };
+      return res.redirect("/admin/categories");
     }
     req.session.toastr = {
       type: "success",
@@ -110,6 +150,10 @@ exports.toggleStatus = async (req, res) => {
     res.redirect("/admin/categories");
   } catch (error) {
     console.error("Error toggling category status:", error);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi cập nhật trạng thái loại sản phẩm",
+    };
+    res.redirect("/admin/categories");
   }
 };

@@ -1,4 +1,12 @@
 <h2>Quản lý khách hàng</h2>
+<div class="mb-3">
+  <label for="customer-status" class="form-label">Lọc khách hàng:</label>
+  <select id="customer-status" class="form-select select2">
+    <option value="" {{#unless status}}selected{{/unless}}>Tất cả</option>
+    <option value="1" {{#if (eq status '1')}}selected{{/if}}>Đang hoạt động</option>
+    <option value="0" {{#if (eq status '0')}}selected{{/if}}>Bị khóa</option>
+  </select>
+</div>
 
 <table id="customerTable" class="display">
     <thead>
@@ -39,21 +47,15 @@
                 <!-- Nếu status = 1 thì hiện nút Khóa -->
                             <button class="btn btn-warning btn-toggle-status" 
                                 data-id="{{this.cus_id}}"
-                                data-name="{{this.fullname}}"
                                 data-status="{{this.status}}"
-                                data-bs-toggle="modal"
-                                data-bs-target="#toggle-status-modal"
                                 data-type="customers">Khóa
                             </button>
                     {{else}}
                 <!-- Nếu status = 0 thì hiện nút Mở khóa -->
                         <button class="btn btn-success btn-toggle-status" 
                             data-id="{{this.cus_id}}" 
-                            data-name="{{this.fullname}}"
                             data-status="{{this.status}}"
-                            data-bs-toggle="modal"
-                            data-bs-target="#toggle-status-modal"
-                            data-type="customers">Mở khóa
+                            data-type="customers">Mở
                         </button>
                     {{/if}}
                 </td>

@@ -16,32 +16,39 @@
   </div>
 
   <!-- Danh sách sách -->
-  <div class="col-md-6">
-    <table id="importBookTable" class="display">
-      <thead>
-        <tr>
-          <th>Tên sách</th>
-          <th>Tác giả</th>
-          <th>Nhà xuất bản</th>
-          <th>Số lượng</th>
-          <th>Giá trung bình</th>
+{{#if hasPublisher}}
+<div class="col-md-6">
+  <table id="importBookTable" class="display">
+    <thead>
+      <tr>
+        <th>Tên sách</th>
+        <th>Tác giả</th>
+        <th>Nhà xuất bản</th>
+        <th>Số lượng</th>
+        <th>Giá trung bình</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each books}}
+        <tr data-book-id="{{this.book_id}}"
+            data-title="{{this.book_title}}"
+            data-publisher-id="{{this.publisher_id}}">
+          <td>{{this.book_title}}</td>
+          <td>{{this.author_name}}</td>
+          <td>{{this.publisher_name}}</td>
+          <td>{{this.stock_quantity}}</td>
+          <td>{{formatPrice this.avg_import_price}}</td>
         </tr>
-      </thead>
-      <tbody>
-        {{#each books}}
-          <tr data-book-id="{{this.book_id}}" 
-              data-title="{{this.book_title}}" 
-              data-publisher-id="{{this.publisher_id}}">
-            <td>{{this.book_title}}</td>
-            <td>{{this.author_name}}</td>
-            <td>{{this.publisher_name}}</td>
-            <td>{{this.stock_quantity}}</td>
-            <td>{{this.avg_import_price}}</td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
-  </div>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<div class="col-md-6 text-muted fst-italic">
+  Vui lòng chọn nhà xuất bản để hiển thị danh sách sách
+</div>
+{{/if}}
+
 
   <!-- Danh sách sách đã chọn -->
   <div class="col-md-6">

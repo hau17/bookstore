@@ -111,6 +111,10 @@ exports.logout = (req, res) => {
     if (err) {
       console.error("Lỗi đăng xuất:", err);
     }
+    req.session.toastr = {
+      type: "success",
+      message: "Đăng xuất thành công!",
+    };
     res.redirect("/");
   });
 };

@@ -4,23 +4,20 @@ exports.getOrdersPage = async (req, res) => {
   if (!req.session.customer) {
     return res.redirect("/account/login");
   }
-  const id = req.session.customer.id;
-  const filter = req.query.filter || "";
+  const cus_id = req.session.customer.id;
+  const order_status = req.query.order_status || "";
 
   try {
-    const orders = await orderService.getCustomerOrders(id, filter);
-    let title = "Tất cả đơn hàng";
-    if (filter === "waiting") title = "Chờ xác nhận";
-    else if (filter === "preparing") title = "Đang chuẩn bị hàng";
-    else if (filter === "delivering") title = "Đang giao";
-    else if (filter === "delivered") title = "Đã giao";
-    else if (filter === "cancelled") title = "Bị hủy";
+    const orders = await orderService.getCustomerOrders({
+      cus_id,
+      order_status,
+    });
 
     res.render("client/account/orders", {
       layout: "main",
       orders,
-      filter,
-      title,
+      order_status,
+      title: "Đơn hàng của tôi",
     });
   } catch (err) {
     console.error("Lỗi:", err);
@@ -34,9 +31,9 @@ exports.getOrderDetailsPage = async (req, res) => {
   }
   const cus_id = req.session.customer.id;
   const order_id = req.params.id;
-
   try {
-    const orderData = await accountService.getOrderDetails(cus_id, order_id);
+    const orderData = await orderService.getOrderDetails({ cus_id, order_id });
+    console.log("orderData", orderData);
     res.render("client/account/order-detail", {
       layout: "main",
       order: orderData.order,
@@ -62,10 +59,18 @@ exports.postCancelOrder = async (req, res) => {
   const order_id = req.params.id;
 
   try {
-    await orderService.cancelOrder(cus_id, order_id);
-    res.json({ success: true, message: "Hủy đơn hàng thành công" });
+    await orderService.cancelOrder({ cus_id, order_id });
+    req.session.toastr = {
+      type: "success",
+      message: "Hủy đơn hàng thành công",
+    };
+    res.redirect("/account/orders");
   } catch (err) {
     console.error("Lỗi hủy đơn hàng:", err.message);
-    res.status(400).json({ error: err.message });
+    req.session.toastr = {
+      type: "error",
+      message: "Không thể hủy đơn hàng",
+    };
+    res.redirect("/account/orders");
   }
 };

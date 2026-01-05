@@ -1,163 +1,180 @@
-document.addEventListener('DOMContentLoaded', function () {
-  $('#admin-order-table').DataTable({
+document.addEventListener("DOMContentLoaded", function () {
+  $("#admin-order-table").DataTable({
     responsive: true,
     language: {
-      search: 'Tìm kiếm:',
-      lengthMenu: 'Hiển thị _MENU_ mục',
-      info: 'Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục',
-      infoEmpty: 'Không có mục nào',
+      search: "Tìm kiếm:",
+      lengthMenu: "Hiển thị _MENU_ mục",
+      info: "Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục",
+      infoEmpty: "Không có mục nào",
       paginate: {
-        next: 'Tiếp theo',
-        previous: 'Trước'
-      }
-    }
+        next: "Tiếp theo",
+        previous: "Trước",
+      },
+    },
   });
 
-  $('.select2').select2();
-// lọc loại đơn hàng(chưa giao/đã giao)
-$('#admin-order-filter').on('change', function () {
-  let value = $(this).val();
+  $(".select2").select2();
+  // lọc loại đơn hàng(chưa giao/đã giao)
+  $("#admin-order-status").on("change", function () {
+    let value = $(this).val();
 
-  let title = "Tất cả đơn hàng";
-  if (value === "preparing") title = "Đang chuẩn bị hàng";
-  else if (value === "delivering") title = "Đang giao";
-  else if (value === "delivered") title = "Đã giao";
-  else if (value === "cancelled") title = "Bị hủy";
-  else if (value === "waiting") title = "Chờ xác nhận";
+    window.location.href = "/admin/orders" + (value ? "?status=" + value : "");
+  });
+  const statusOptionsMap = {
+    1: { 2: "Chuẩn bị hàng", 5: "Hủy" },
+    2: { 3: "Đang giao", 5: "Hủy" },
+    3: { 4: "Đã giao" },
+  };
+  document.querySelectorAll(".btn-change-status").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const orderId = btn.dataset.id;
+      const currentStatus = Number(btn.dataset.status);
 
-  window.location.href = '/admin/orders' + (value ? '?filter=' + value : '');
-});
+      const options = statusOptionsMap[currentStatus];
+      if (!options) {
+        toastr.error("Không có trạng thái hợp lệ để chuyển đổi!");
+        return;
+      }
 
+      const { value: statusId } = await Swal.fire({
+        title: "Thay đổi trạng thái đơn hàng",
+        input: "select",
+        inputOptions: options,
+        inputPlaceholder: "Chọn trạng thái",
+        showCancelButton: true,
+        confirmButtonText: "Cập nhật",
+        cancelButtonText: "Hủy",
+        confirmButtonColor: "#198754",
+      });
 
-
-// thay đổi trạng thái đơn hàng
-
-  const statusModal = document.getElementById('admin-order-change-status-modal');
-  if (statusModal) {
-    statusModal.addEventListener('show.bs.modal', event => {
-      const button = event.relatedTarget;
-      const orderId = button.getAttribute('data-id');
-      if (!orderId) return;
-      document.getElementById('admin-order-id').value = orderId;
-    });
-
-    const statusForm = document.getElementById('admin-order-change-status-form');
-    statusForm.addEventListener('submit', async event => {
-      event.preventDefault();
-      const orderId = document.getElementById('admin-order-id').value;
-      const statusId = document.getElementById('admin-order-status-id').value;
+      if (!statusId) return;
 
       try {
-        const response = await fetch(`/admin/orders/${orderId}/status`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `order_id=${encodeURIComponent(orderId)}&status_id=${encodeURIComponent(statusId)}`
+        const res = await fetch(`/admin/orders/${orderId}/status`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `status_id=${encodeURIComponent(statusId)}`,
         });
-
-        const result = await response.json();
-        if (result.success) {
-          alert('Cập nhật trạng thái thành công!');
-          window.location.reload();
+        const data = await res.json();
+        if (res.ok) {
+          toastr.success(data.message);
+          setTimeout(() => location.reload(), 1200);
         } else {
-          alert('Cập nhật thất bại: ' + result.error);
+          toastr.error(data.message);
+          setTimeout(() => location.reload(), 1200);
         }
-      } catch (error) {
-        console.error('Error updating status:', error);
-        alert('Lỗi server');
+      } catch {
+        toastr.error("Cập nhật trạng thái thất bại!");
       }
     });
-  }
+  });
 
-// Xử lý click vào hàng để hiển thị chi tiết đơn hàng
-  document.querySelector('#admin-order-table tbody').addEventListener('click', async function (event) {
-  const row = event.target.closest('.admin-order-row');
-  if (!row) return; // không phải dòng cần click
+  document.querySelectorAll(".btn-change-payment").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const orderId = btn.dataset.id;
 
-  // Tránh kích hoạt modal khi nhấn vào nút hoặc link
-  if (event.target.tagName === 'BUTTON' || event.target.tagName === 'A') {
-    return;
-  }
+      const { value: paymentStatus } = await Swal.fire({
+        title: "Trạng thái thanh toán",
+        input: "select",
+        inputOptions: {
+          0: "Chưa thanh toán",
+          1: "Đã thanh toán",
+        },
+        showCancelButton: true,
+        confirmButtonText: "Cập nhật",
+        cancelButtonText: "Hủy",
+        confirmButtonColor: "#198754",
+      });
 
-  const orderId = row.getAttribute('data-id');
-  if (!orderId) {
-    alert('Không thể hiển thị chi tiết đơn hàng!');
-    return;
-  }
+      if (paymentStatus === undefined) return;
 
-  // Đổ dữ liệu vào modal
-  document.getElementById('admin-order-detail-id').textContent = orderId;
-  document.getElementById('admin-order-detail-user-name').textContent = row.getAttribute('data-user-name');
-  document.getElementById('admin-order-detail-user-address').textContent = row.getAttribute('data-address');
-  document.getElementById('admin-order-detail-order-date').textContent = row.getAttribute('data-order-date');
-  document.getElementById('admin-order-detail-total-amount').textContent = row.getAttribute('data-total-amount');
-  document.getElementById('admin-order-detail-payment-name').textContent = row.getAttribute('data-payment-name');
-  document.getElementById('admin-order-detail-payment-status').textContent =
-    row.getAttribute('data-payment-status') === '0' ? 'Chưa thanh toán' : 'Đã thanh toán';
-  document.getElementById('admin-order-detail-status-name').textContent = row.getAttribute('data-status-name');
+      try {
+        const res = await fetch(`/admin/orders/${orderId}/payment-status`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `payment_status=${encodeURIComponent(paymentStatus)}`,
+        });
+        const data = await res.json();
 
-  try {
-    const response = await fetch(`/admin/orders/${orderId}/details`);
-    if (!response.ok) throw new Error('Fetch failed');
-    const details = await response.json();
+        if (res.ok) {
+          toastr.success(data.message);
+          setTimeout(() => location.reload(), 1200);
+        } else {
+          toastr.error(data.message);
+          setTimeout(() => location.reload(), 1200);
+        }
+      } catch {
+        toastr.error("Cập nhật trạng thái thanh toán thất bại!");
+      }
+    });
+  });
 
-    const booksTbody = document.getElementById('admin-order-detail-books');
-    booksTbody.innerHTML = '';
+  // Xử lý click vào hàng để hiển thị chi tiết đơn hàng
+  document
+    .querySelector("#admin-order-table tbody")
+    .addEventListener("click", async function (event) {
+      const row = event.target.closest(".admin-order-row");
+      if (!row) return; // không phải dòng cần click
 
-    details.forEach(detail => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
+      // Tránh kích hoạt modal khi nhấn vào nút hoặc link
+      if (event.target.tagName === "BUTTON" || event.target.tagName === "A") {
+        return;
+      }
+
+      const orderId = row.getAttribute("data-id");
+      if (!orderId) {
+        toastr.error("Không tìm thấy ID đơn hàng!");
+        return;
+      }
+
+      // Đổ dữ liệu vào modal
+      document.getElementById("admin-order-detail-id").textContent = orderId;
+      document.getElementById("admin-order-detail-user-name").textContent =
+        row.getAttribute("data-user-name");
+      document.getElementById("admin-order-detail-user-address").textContent =
+        row.getAttribute("data-address");
+      document.getElementById("admin-order-detail-order-date").textContent =
+        row.getAttribute("data-order-date");
+      document.getElementById("admin-order-detail-total-amount").textContent =
+        row.getAttribute("data-total-amount");
+      document.getElementById("admin-order-detail-payment-name").textContent =
+        row.getAttribute("data-payment-name");
+      document.getElementById("admin-order-detail-payment-status").textContent =
+        row.getAttribute("data-payment-status") === "0"
+          ? "Chưa thanh toán"
+          : "Đã thanh toán";
+      document.getElementById("admin-order-detail-status-name").textContent =
+        row.getAttribute("data-status-name");
+
+      try {
+        const response = await fetch(`/admin/orders/${orderId}/details`);
+        if (!response.ok) throw new Error("Fetch failed");
+        const result = await response.json();
+        const details = result.data;
+
+        const booksTbody = document.getElementById("admin-order-detail-books");
+        booksTbody.innerHTML = "";
+
+        details.forEach((detail) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
         <td>${detail.book_title}</td>
         <td>${detail.quantity}</td>
         <td>${detail.price}</td>
         <td>${(detail.quantity * detail.price).toFixed(2)}</td>
       `;
-      booksTbody.appendChild(tr);
-    });
-  } catch (error) {
-    console.error('Error fetching order details:', error);
-    alert('Không thể tải chi tiết đơn hàng!');
-  }
-
-  // Hiển thị modal
-  const detailModal = new bootstrap.Modal(document.getElementById('admin-order-detail-modal'));
-  detailModal.show();
-});
-
-// thay đổi trạng thái thanh toán đơn hàng
-const paymentStatusModal = document.getElementById('admin-order-change-payment-status-modal');
-  if (paymentStatusModal) {
-    paymentStatusModal.addEventListener('show.bs.modal', event => {
-      const button = event.relatedTarget;
-      const orderId = button.getAttribute('data-id');
-      if (!orderId) return;
-      document.getElementById('admin-order-payment-status-id').value = orderId;
-    });
-
-    const paymentStatusForm = document.getElementById('admin-order-change-payment-status-form');
-    paymentStatusForm.addEventListener('submit', async event => {
-      event.preventDefault();
-      const orderId = document.getElementById('admin-order-payment-status-id').value;
-      console.log(orderId);
-      const paymentStatus = document.getElementById('admin-order-payment-status').value;
-      console.log(paymentStatus);
-      try {
-        const response = await fetch(`/admin/orders/${orderId}/payment-status`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `order_id=${encodeURIComponent(orderId)}&payment_status=${encodeURIComponent(paymentStatus)}`
+          booksTbody.appendChild(tr);
         });
-        const result = await response.json();
-        if (result.success) {
-          alert('Cập nhật trạng thái thanh toán thành công!');
-          window.location.reload();
-        } else {
-          alert('Cập nhật thất bại: ' + result.error);
-        }
       } catch (error) {
-        console.error('Error updating payment status:', error);
-        alert('Lỗi server');
+        console.error("Error fetching order details:", error);
+        toastr.error("Lấy chi tiết đơn hàng thất bại!");
+        return;
       }
-    });
-  }
-});
 
+      // Hiển thị modal
+      const detailModal = new bootstrap.Modal(
+        document.getElementById("admin-order-detail-modal")
+      );
+      detailModal.show();
+    });
+});

@@ -5,13 +5,21 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Chỉnh sửa <span id="edit-name"></span></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
         </div>
         <div class="modal-body">
           Bạn có chắc chắn muốn lưu thay đổi này không?
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >Hủy</button>
           <button type="submit" class="btn btn-primary">Lưu</button>
         </div>
       </div>
@@ -26,13 +34,21 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Xóa <span id="delete-name"></span></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
         </div>
         <div class="modal-body">
-          Bạn có chắc chắn muốn xóa không nè?
+          Bạn có chắc chắn muốn xóa không?
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >Hủy</button>
           <button type="submit" class="btn btn-danger">Xóa</button>
         </div>
       </div>
@@ -41,20 +57,74 @@
 </div>
 
 <!-- Modal Khóa/Mở khóa chung -->
-<div class="modal fade" id="toggle-status-modal" tabindex="-1" aria-hidden="true">
+<div
+  class="modal fade"
+  id="toggle-status-modal"
+  tabindex="-1"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <form method="POST" id="toggle-status-form">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title"><span id="toggle-status-action"></span> <span id="toggle-status-name"></span></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h5 class="modal-title"><span id="toggle-status-action"></span>
+            <span id="toggle-status-name"></span></h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
         </div>
         <div class="modal-body">
-          Bạn có chắc chắn muốn <span id="toggle-status-action2"></span> không?
+          Bạn có chắc chắn muốn
+          <span id="toggle-status-action2"></span>
+          không?
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-          <button type="submit" class="btn btn-warning" id="toggle-status-btn"></button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >Hủy</button>
+          <button
+            type="submit"
+            class="btn btn-warning"
+            id="toggle-status-btn"
+          ></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Hủy đơn hàng -->
+<div
+  class="modal fade"
+  id="cancel-order-modal"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <form method="POST" id="cancel-order-form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Hủy <span id="cancel-order-name"></span></h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          Bạn có chắc chắn muốn hủy đơn hàng này không?
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >Không</button>
+          <button type="submit" class="btn btn-danger">Hủy đơn</button>
         </div>
       </div>
     </form>

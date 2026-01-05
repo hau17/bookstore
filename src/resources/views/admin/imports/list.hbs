@@ -2,7 +2,7 @@
 
 <div class="mb-3 d-flex justify-content-between align-items-center">
   <div>
-    <a href="/admin/imports/new" class="btn btn-success">Nhập hàng</a>
+    <a href="/admin/imports/new" class="btn btn-primary">Nhập hàng</a>
   </div>
 </div>
 
@@ -22,7 +22,7 @@
         <td>{{this.import_id}}</td>
         <td>{{this.publisher_name}}</td>
         <td>{{this.total_quantity}}</td>
-        <td>{{this.total_cost}}</td>
+        <td>{{formatPrice this.total_cost}}</td>
         <td>{{formatDate this.created_date}}</td>
       </tr>
     {{/each}}

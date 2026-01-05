@@ -2,29 +2,34 @@ const productService = require("../../services/admin/product_service.js");
 const categoryService = require("../../services/admin/category_service.js");
 const authorService = require("../../services/admin/author_service.js");
 const publisherService = require("../../services/admin/publisher_service.js");
+const fs = require("fs");
+const path = require("path");
+
 exports.list = async (req, res) => {
   try {
-    const filter = req.query.filter || "";
+    const status = req.query.status || "";
     let products;
-    if (filter === "active") {
+    if (status === "1") {
       products = await productService.getAll({ status: 1 });
-    } else if (filter === "inactive") {
+    } else if (status === "0") {
       products = await productService.getAll({ status: 0 });
     } else {
       products = await productService.getAll();
     }
     let title = "Tất cả sản phẩm";
-    if (filter === "active") title = "Sản phẩm đang bán";
-    else if (filter === "inactive") title = "Sản phẩm ngừng bán";
     res.render("admin/products/list", {
       layout: "main-admin",
       title,
       products,
-      filter,
+      status: status,
     });
   } catch (error) {
     console.error("Error listing products:", error);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải danh sách sản phẩm",
+    };
+    res.redirect("/admin");
   }
 };
 
@@ -32,20 +37,27 @@ exports.getProductById = async (req, res) => {
   try {
     const product = await productService.getProductById(req.params.id);
     if (!product) {
-      return res.status(404).send("Sản phẩm không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Sản phẩm không tồn tại",
+      };
+      res.redirect("/admin/products");
     }
-    res.status(200).json(product);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi lấy thông tin sản phẩm",
+    };
+    res.redirect("/admin/products");
   }
 };
 
 exports.showAddForm = async (req, res) => {
   try {
-    const categories = await categoryService.getAll("active");
-    const authors = await authorService.getAll("active");
-    const publishers = await publisherService.getAll("active");
+    const categories = await categoryService.getAll({ status: "1" });
+    const authors = await authorService.getAll({ status: "1" });
+    const publishers = await publisherService.getAll({ status: "1" });
     res.render("admin/products/add", {
       layout: "main-admin",
       title: "Thêm sản phẩm",
@@ -55,7 +67,11 @@ exports.showAddForm = async (req, res) => {
     });
   } catch (error) {
     console.error("Error showing add form:", error);
-    return res.status(500).json({ error: "Failed to load add form" });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải form thêm sản phẩm",
+    };
+    res.redirect("/admin/products");
   }
 };
 
@@ -79,7 +95,11 @@ exports.add = async (req, res) => {
       !publisher_id ||
       !profit_percentage
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      req.session.toastr = {
+        type: "error",
+        message: "Vui lòng điền đầy đủ các trường bắt buộc",
+      };
+      return res.redirect("/admin/products");
     }
     const image_path = req.file ? "/img/products/" + req.file.filename : null;
     const product = {
@@ -102,9 +122,11 @@ exports.add = async (req, res) => {
     res.redirect("/admin/products");
   } catch (error) {
     console.error("Error adding product:", error);
-    return res
-      .status(500)
-      .json({ error: "Database insert failed: " + error.message });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi thêm sản phẩm: " + error.message,
+    };
+    res.redirect("/admin/products");
   }
 };
 
@@ -112,11 +134,15 @@ exports.showEditForm = async (req, res) => {
   try {
     const product = await productService.getProductById(req.params.id);
     if (!product) {
-      return res.status(404).send("Sản phẩm không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Sản phẩm không tồn tại",
+      };
+      return res.redirect("/admin/products");
     }
-    const categories = await categoryService.getAll("active");
-    const authors = await authorService.getAll("active");
-    const publishers = await publisherService.getAll("active");
+    const categories = await categoryService.getAll({ status: "1" });
+    const authors = await authorService.getAll({ status: "1" });
+    const publishers = await publisherService.getAll({ status: "1" });
     res.render("admin/products/edit", {
       layout: "main-admin",
       title: "Sửa sản phẩm",
@@ -127,7 +153,11 @@ exports.showEditForm = async (req, res) => {
     });
   } catch (error) {
     console.error("Error showing edit form:", error);
-    return res.status(500).json({ error: "Failed to load edit form" });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải form sửa sản phẩm",
+    };
+    res.redirect("/admin/products");
   }
 };
 
@@ -151,14 +181,43 @@ exports.edit = async (req, res) => {
       !publisher_id ||
       !profit_percentage
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      req.session.toastr = {
+        type: "error",
+        message: "Vui lòng điền đầy đủ các trường bắt buộc",
+      };
+      return res.redirect(`/admin/products/${productId}/edit`);
     }
-    const oldProduct = await productService.getProductById(productId); // Lấy ảnh cũ
-    const image_path = req.file
-      ? "/img/products/" + req.file.filename
-      : oldProduct.image_path; // Giữ ảnh cũ nếu không có ảnh mới
+
+    const oldProduct = await productService.getProductById(productId);
+    if (!oldProduct) {
+      req.session.toastr = {
+        type: "error",
+        message: "Sản phẩm không tồn tại",
+      };
+      return res.redirect("/admin/products");
+    }
+
+    let image_path = oldProduct.image_path;
+
+    if (req.file) {
+      image_path = "/img/products/" + req.file.filename;
+
+      if (oldProduct.image_path) {
+        const oldImageFullPath = path.join(
+          __dirname,
+          "../../public",
+          oldProduct.image_path
+        );
+
+        // Kiểm tra file tồn tại trước khi xóa
+        if (fs.existsSync(oldImageFullPath)) {
+          fs.unlinkSync(oldImageFullPath);
+        }
+      }
+    }
 
     const product = {
+      book_id: productId,
       book_title,
       category_id,
       author_id,
@@ -167,9 +226,10 @@ exports.edit = async (req, res) => {
       profit_percentage,
       description,
       image_path,
-      book_id: productId,
     };
+
     await productService.update(product);
+
     req.session.toastr = {
       type: "success",
       message: "Cập nhật sản phẩm thành công",
@@ -177,9 +237,11 @@ exports.edit = async (req, res) => {
     res.redirect("/admin/products");
   } catch (error) {
     console.error("Error updating product:", error);
-    return res
-      .status(500)
-      .json({ error: "Database update failed: " + error.message });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi cập nhật sản phẩm",
+    };
+    res.redirect("/admin/products");
   }
 };
 
@@ -189,7 +251,11 @@ exports.toggleStatus = async (req, res) => {
     const productId = req.params.id;
     const result = await productService.toggleStatus(productId);
     if (result.affectedRows === 0) {
-      return res.status(404).send("Sản phẩm không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Sản phẩm không tồn tại",
+      };
+      return res.redirect("/admin/products");
     }
     req.session.toastr = {
       type: "success",
@@ -199,6 +265,10 @@ exports.toggleStatus = async (req, res) => {
     // res.status(200).json({ message: 'Trạng thái sản phẩm đã được cập nhật' });
   } catch (error) {
     console.error("Error toggling product status:", error);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi cập nhật trạng thái sản phẩm: " + error.message,
+    };
+    res.redirect("/admin/products");
   }
 };

@@ -19,36 +19,19 @@ document.addEventListener("DOMContentLoaded", function () {
     $(".select2").select2();
   });
 
-  // Lọc theo vai trò
-  $("#user-role-filter").on("change", function () {
-    applyFilters();
-  });
+  $("#user-role-filter, #user-status-filter").on("change", applyFilters);
 
-  // Lọc theo trạng thái
-  $("#user-status-filter").on("change", function () {
-    applyFilters();
-  });
-
-  // Hàm áp dụng bộ lọc
   function applyFilters() {
-    const roleValue = $("#user-role-filter").val();
-    const statusValue = $("#user-status-filter").val();
+    const params = new URLSearchParams();
 
-    let url = "/admin/users";
-    const params = [];
+    const role = $("#user-role-filter").val();
+    const status = $("#user-status-filter").val();
 
-    if (roleValue) {
-      params.push(`role=${roleValue}`);
-    }
-    if (statusValue) {
-      params.push(`status=${statusValue}`);
-    }
+    if (role) params.set("role", role);
+    if (status) params.set("status", status);
 
-    if (params.length > 0) {
-      url += "?" + params.join("&");
-    }
-
-    window.location.href = url;
+    const query = params.toString();
+    window.location.href = query ? `/admin/users?${query}` : "/admin/users";
   }
 
   // Xử lý click vào hàng để hiển thị chi tiết

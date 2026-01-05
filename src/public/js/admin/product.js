@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Khởi tạo DataTable
-  $("#myTable").DataTable({
+  $("#productTable").DataTable({
     autoWidth: false,
     language: {
       search: "Tìm kiếm:",
@@ -20,18 +20,18 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Lọc sản phẩm
-  $("#product-status-filter").on("change", function () {
+  $("#product-status").on("change", function () {
     let value = $(this).val();
 
     window.location.href =
-      "/admin/products" + (value ? "?filter=" + value : "");
+      "/admin/products" + (value ? "?status=" + value : "");
   });
 
   // Xử lý click vào hàng để hiển thị chi tiết
   const detailModal = document.getElementById("modal-product-detail-admin");
   if (detailModal) {
     document
-      .querySelector("#myTable tbody")
+      .querySelector("#productTable tbody")
       .addEventListener("click", function (event) {
         const row = event.target.closest(".product__row--click");
         if (!row) return; // không phải dòng click được

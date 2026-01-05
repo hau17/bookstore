@@ -5,6 +5,9 @@ exports.getAll = async ({ status, publisherId } = {}) => {
     SELECT 
       b.book_id,
       b.book_title,
+      b.category_id,
+      b.author_id,
+      b.publisher_id,
       b.discount_percentage,
       b.profit_percentage,
       b.avg_import_price,
@@ -13,7 +16,6 @@ exports.getAll = async ({ status, publisherId } = {}) => {
       b.image_path,
       b.created_at,
       b.status,
-      b.publisher_id,
       c.category_name,
       a.author_name,
       p.publisher_name
@@ -50,6 +52,9 @@ exports.getProductById = async (id) => {
     SELECT 
       b.book_id,
       b.book_title,
+      b.category_id,
+      b.author_id,
+      b.publisher_id,
       b.discount_percentage,
       b.profit_percentage,
       b.avg_import_price,
@@ -65,7 +70,7 @@ exports.getProductById = async (id) => {
     LEFT JOIN categories c ON b.category_id = c.category_id
     LEFT JOIN authors a ON b.author_id = a.author_id
     LEFT JOIN publishers p ON b.publisher_id = p.publisher_id
-    WHERE b.book_id = ? AND b.status = '1'
+    WHERE b.book_id = ? 
   `;
   try {
     const [product] = await db.query(sql, [id]);

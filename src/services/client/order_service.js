@@ -1,13 +1,15 @@
 const db = require("../../config/db.js");
 
-exports.getCustomerOrders = async ({ customerId, orderStatus }) => {
+exports.getCustomerOrders = async ({ cus_id, order_status }) => {
   let sql = `
     SELECT 
       o.order_id,
       o.created_at,
       o.total_amount,
+      o.total_quantity,
+      o.payment_id,
       o.payment_status,
-      os.status_id,
+      o.status_id,
       os.status_name,
       p.payment_name
     FROM orders o
@@ -16,11 +18,11 @@ exports.getCustomerOrders = async ({ customerId, orderStatus }) => {
     WHERE o.cus_id = ?
   `;
 
-  const params = [customerId];
+  const params = [cus_id];
 
-  if (orderStatus) {
+  if (order_status) {
     sql += " AND o.status_id = ?";
-    params.push(orderStatus);
+    params.push(order_status);
   }
 
   sql += " ORDER BY o.order_id DESC";
@@ -29,7 +31,7 @@ exports.getCustomerOrders = async ({ customerId, orderStatus }) => {
   return orders;
 };
 
-exports.getOrderById = async (orderId) => {
+exports.getOrderById = async ({ order_id, cus_id }) => {
   const sql = `
     SELECT
       o.order_id,
@@ -42,11 +44,11 @@ exports.getOrderById = async (orderId) => {
       o.payment_status,
       o.payment_id
     FROM orders o
-    WHERE o.order_id = ?
+    WHERE o.order_id = ? AND o.cus_id = ?
     LIMIT 1
   `;
   try {
-    const [rows] = await db.query(sql, [orderId]);
+    const [rows] = await db.query(sql, [order_id, cus_id]);
     if (rows.length === 0) {
       throw new Error("Đơn hàng không tồn tại");
     }
@@ -57,12 +59,11 @@ exports.getOrderById = async (orderId) => {
   }
 };
 
-exports.getOrderDetails = async (cus_id, order_id) => {
+exports.getOrderDetails = async ({ cus_id, order_id }) => {
   // Get order header info
   const headerSql = `
     SELECT 
       o.order_id,
-      o.address,
       o.created_at,
       o.phone_number,
       o.address,
@@ -84,8 +85,10 @@ exports.getOrderDetails = async (cus_id, order_id) => {
   const itemsSql = `
     SELECT 
       od.order_detail_id,
+      od.book_id,
       od.quantity,
       od.price,
+      od.total_amount,
       b.book_title
     FROM order_details od
     JOIN books b ON od.book_id = b.book_id
@@ -97,6 +100,7 @@ exports.getOrderDetails = async (cus_id, order_id) => {
     SELECT 
       osh.history_id,
       osh.created_at,
+      osh.status_id,
       os.status_name
     FROM order_status_history osh
     JOIN order_status os ON osh.status_id = os.status_id
@@ -124,7 +128,7 @@ exports.getOrderDetails = async (cus_id, order_id) => {
   }
 };
 
-exports.cancelOrder = async (cus_id, order_id) => {
+exports.cancelOrder = async ({ cus_id, order_id }) => {
   const connection = await db.getConnection();
   try {
     await connection.beginTransaction();
@@ -161,7 +165,7 @@ exports.cancelOrder = async (cus_id, order_id) => {
 
     for (const d of details) {
       const bookId = d.book_id;
-      const qty = Number(d.quantity) || 0;
+      const qty = d.quantity;
       if (bookId && qty > 0) {
         await connection.query(
           "UPDATE books SET stock_quantity = stock_quantity + ? WHERE book_id = ?",
@@ -170,7 +174,7 @@ exports.cancelOrder = async (cus_id, order_id) => {
       }
     }
 
-    await connection.query("COMMIT");
+    await connection.commit();
     return true;
   } catch (error) {
     await connection.query("ROLLBACK");

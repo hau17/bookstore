@@ -13,28 +13,41 @@ exports.listImports = async (req, res) => {
     });
   } catch (error) {
     console.error("Error listing imports:", error);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải danh sách nhập sách",
+    };
+    res.redirect("/admin");
   }
 };
 
 // Show import form (select books to import)
 exports.showImportForm = async (req, res) => {
-  const publisherId = req.query.publisher;
+  const publisherId = req.query.publisher || null;
+
   try {
-    const books = await bookService.getAll({
-      status: 1,
-      publisherId: publisherId,
-    });
+    let books = [];
+    if (publisherId) {
+      books = await bookService.getAll({
+        status: 1,
+        publisherId: publisherId,
+      });
+    }
     res.render("admin/imports/import", {
       layout: "main-admin",
       title: "Nhập sách",
-      books,
+      books, // rỗng nếu chưa chọn NXB
       publishers: await publisherService.getAll({ status: 1 }),
       selectedPublisherId: publisherId,
+      hasPublisher: !!publisherId,
     });
   } catch (error) {
     console.error("Error displaying import page:", error);
-    res.status(500).send("Lỗi server");
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải trang nhập sách",
+    };
+    res.redirect("/admin");
   }
 };
 
@@ -44,12 +57,20 @@ exports.getImportById = async (req, res) => {
     const id = req.params.id;
     const importData = await importService.getImportDetails(id);
     if (!importData) {
+      req.session.toastr = {
+        type: "error",
+        message: "Phiếu nhập không tồn tại",
+      };
       return res.status(404).json({ error: "Import not found" });
     }
     res.json(importData);
   } catch (error) {
     console.error("Error fetching import details:", error);
-    res.status(500).json({ error: "Lỗi server" });
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi khi tải thông tin phiếu nhập",
+    };
+    res.redirect("/admin/imports");
   }
 };
 
@@ -59,9 +80,9 @@ exports.addImport = async (req, res) => {
     if (!publisher_id || !books || Object.keys(books).length === 0) {
       req.session.toastr = {
         type: "error",
-        message: "Vui lòng chọn nhà xuất bản và sách để nhập",
+        message: "Vui lòng chọn nhà xuất bản và sách cần nhập",
       };
-      return res.redirect("/admin/imports");
+      return res.redirect("/admin/imports/new");
     }
     const importId = await importService.addImport({
       publisher_id,

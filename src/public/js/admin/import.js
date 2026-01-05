@@ -1,17 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize DataTable
-  $("#importBookTable").DataTable({
-    language: {
-      search: "Tìm kiếm:",
-      lengthMenu: "Hiển thị _MENU_ mục",
-      info: "Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục",
-      infoEmpty: "Không có mục nào",
-      paginate: {
-        next: "Tiếp theo",
-        previous: "Trước",
+  if ($("#importBookTable").length) {
+    $("#importBookTable").DataTable({
+      language: {
+        search: "Tìm kiếm:",
+        lengthMenu: "Hiển thị _MENU_ mục",
+        info: "Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục",
+        infoEmpty: "Không có mục nào",
+        paginate: {
+          next: "Tiếp theo",
+          previous: "Trước",
+        },
       },
-    },
-  });
+    });
+  }
 
   // Initialize Select2 với placeholder tùy chỉnh
   $("#publisher-status-filter").select2({
@@ -53,30 +55,13 @@ document.addEventListener("DOMContentLoaded", function () {
       const row = event.target.closest("tr");
       if (!row) return;
 
-      if (publisherStatusFilter.value === "") {
-        alert("Vui lòng chọn nhà xuất bản trước khi thêm sách!");
-        return;
-      }
-
       const bookId = row.getAttribute("data-book-id");
       const bookTitle = row.getAttribute("data-title");
       const bookPublisherId = row.getAttribute("data-publisher-id");
 
-      // Kiểm tra xem sách có cùng nhà xuất bản không
-      if (parseInt(bookPublisherId) !== parseInt(publisherStatusFilter.value)) {
-        alert("Sách này không thuộc nhà xuất bản đã chọn!");
-        console.log(
-          "bookPublisherId",
-          bookPublisherId,
-          "publisherValue",
-          publisherStatusFilter.value
-        );
-        return;
-      }
-
       // Check if the book is already added
       if (selectedBookList.querySelector(`[data-id="${bookId}"]`)) {
-        alert("Sách đã được chọn để nhập.");
+        toastr.success("Sách đã được thêm vào danh sách");
         return;
       }
 

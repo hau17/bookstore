@@ -1,10 +1,15 @@
 const db = require("../../config/db.js");
 
-exports.getAll = async () => {
-  const sql = `
-    SELECT * FROM customers
-  `;
-  const [rows] = await db.query(sql);
+exports.getAll = async ({ status }) => {
+  let sql = "SELECT * FROM customers";
+  const params = [];
+
+  if (status === "1" || status === "0") {
+    sql += " WHERE status = ?";
+    params.push(status);
+  }
+
+  const [rows] = await db.query(sql, params);
   return rows;
 };
 

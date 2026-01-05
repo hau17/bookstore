@@ -34,6 +34,10 @@ router.post(
 
 router.get("/orders", requireAuth, orderController.getOrdersPage);
 router.get("/orders/:id", requireAuth, orderController.getOrderDetailsPage);
-router.post("/orders/:id/cancel", requireAuth, orderController.postCancelOrder);
+router.patch(
+  "/orders/:id/cancel",
+  requireAuth,
+  orderController.postCancelOrder
+);
 
 module.exports = router;

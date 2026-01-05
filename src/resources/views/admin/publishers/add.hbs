@@ -1,24 +1,28 @@
 <div class="mt-4">
-    <h3>Thêm nhà xuất bản</h3>
-    <form method="POST" action="/admin/publishers/add">
-        <div class="mb-3">
-            <label class="form-label">Tên nhà xuất bản</label>
-            <input type="text" class="form-control" name="publisher_name" required>
-        </div>
+  <h3>Thêm nhà xuất bản</h3>
+  <form method="POST" action="/admin/publishers/add">
+    <div class="mb-3">
+      <label class="form-label">Tên nhà xuất bản</label>
+      <input type="text" class="form-control" name="publisher_name" required />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Địa chỉ</label>
-            <input type="text" class="form-control" name="address">
-        </div>
+    <div class="mb-3">
+      <label class="form-label">Địa chỉ</label>
+      <input type="text" class="form-control" name="address" />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Số điện thoại</label>
-            <input type="text" class="form-control" name="phone_number">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Mô tả</label>
-            <textarea class="form-control" name="description" rows="3"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Thêm nhà xuất bản</button>
-    </form>
+    <div class="mb-3">
+      <label class="form-label">Số điện thoại</label>
+      <input type="text" class="form-control" name="phone_number" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" name="email" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Mô tả</label>
+      <textarea class="form-control" name="description" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Thêm nhà xuất bản</button>
+  </form>
 </div>

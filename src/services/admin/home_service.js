@@ -1,35 +1,35 @@
-const pool = require("../../config/db");
+const db = require("../../config/db");
+const bcrypt = require("bcrypt");
 
 exports.authenticateUser = async (email, password) => {
   const sql = `
-    SELECT user_id, email, role , password
+    SELECT user_id, email, role, password, status
     FROM users
     WHERE email = ?
-    AND status = 1
     LIMIT 1
   `;
 
-  try {
-    const [rows] = await pool.query(sql, [email]);
+  const [rows] = await db.query(sql, [email]);
 
-    if (rows.length === 0) {
-      throw new Error("Không tìm thấy tài khoản");
-    }
-
-    const user = rows[0];
-
-    if (password !== user.password) {
-      throw new Error("Sai mật khẩu");
-    }
-
-    return user;
-  } catch (err) {
-    console.error("Lỗi DB:", err.message);
-    throw err;
+  if (rows.length === 0) {
+    throw new Error("Email hoặc mật khẩu không đúng");
   }
-};
 
-//role gồm có admin, manager, staff
-//các quyền hạn tương ứng sẽ được quy định trong các service khác nhau
-// thêm
-// exports.addUser
+  const user = rows[0];
+
+  if (user.status !== 1) {
+    throw new Error("Tài khoản đã bị khóa");
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    throw new Error("Email hoặc mật khẩu không đúng");
+  }
+
+  return {
+    user_id: user.user_id,
+    email: user.email,
+    role: user.role,
+  };
+};

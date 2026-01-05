@@ -29,24 +29,18 @@
           </a>
           {{#if (eq this.status "1")}}
             <button
-              class="btn btn-warning toggle-status-btn"
+              class="btn btn-warning btn-toggle-status"
               data-id="{{this.category_id}}"
-              data-name="{{this.category_name}}"
               data-status="{{this.status}}"
-              data-bs-toggle="modal"
-              data-bs-target="#toggle-status-modal"
               data-type="categories"
             >Khóa</button>
           {{else}}
             <button
-              class="btn btn-success toggle-status-btn"
+              class="btn btn-success btn-toggle-status"
               data-id="{{this.category_id}}"
-              data-name="{{this.category_name}}"
               data-status="{{this.status}}"
-              data-bs-toggle="modal"
-              data-bs-target="#toggle-status-modal"
               data-type="categories"
-            >Mở khóa</button>
+            >Mở</button>
           {{/if}}
         </td>
       </tr>
