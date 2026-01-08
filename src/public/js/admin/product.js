@@ -1,18 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Khởi tạo DataTable
-  $("#productTable").DataTable({
-    autoWidth: false,
-    language: {
-      search: "Tìm kiếm:",
-      lengthMenu: "Hiển thị _MENU_ mục",
-      info: "Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục",
-      infoEmpty: "Không có mục nào",
-      paginate: {
-        next: "Tiếp theo",
-        previous: "Trước",
-      },
-    },
-  });
+  $("#productTable").DataTable();
 
   // Khởi tạo Select2
   $(document).ready(function () {

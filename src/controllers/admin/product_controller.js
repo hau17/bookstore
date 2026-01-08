@@ -8,14 +8,9 @@ const path = require("path");
 exports.list = async (req, res) => {
   try {
     const status = req.query.status || "";
-    let products;
-    if (status === "1") {
-      products = await productService.getAll({ status: 1 });
-    } else if (status === "0") {
-      products = await productService.getAll({ status: 0 });
-    } else {
-      products = await productService.getAll();
-    }
+    const products = await productService.getAll({
+      status: status || undefined,
+    });
     let title = "Tất cả sản phẩm";
     res.render("admin/products/list", {
       layout: "main-admin",

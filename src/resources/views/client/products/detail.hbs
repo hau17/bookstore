@@ -39,19 +39,27 @@
 
         <!-- Pricing -->
         <div class="mb-4">
-          <div class="h4 text-danger mb-2">
-            Giá bán:
-            <strong>{{formatPrice product.discountedPrice}} VND</strong>
-          </div>
-          {{#if product.discount_percentage}}
-            <div>
-              <span class="badge bg-danger me-2">-{{product.discount_percentage}}%</span>
-              <del class="text-muted">{{formatPrice selling_price.}} VND</del>
-            </div>
-          {{else}}
-            <small class="text-muted">{{formatPrice product.original_price}} VND</small>
-          {{/if}}
-        </div>
+  {{#if product.has_discount}}
+    <div class="h4 text-danger mb-2">
+      Giá bán:
+      <strong>{{formatPrice product.selling_price}} VND</strong>
+    </div>
+    <div>
+      <span class="badge bg-danger me-2">
+        -{{product.discount_percentage}}%
+      </span>
+      <del class="text-muted">
+        {{formatPrice product.original_price}} VND
+      </del>
+    </div>
+  {{else}}
+    <div class="h4 mb-2">
+      Giá bán:
+      <strong>{{formatPrice product.original_price}} VND</strong>
+    </div>
+  {{/if}}
+</div>
+
 
         <!-- Action Buttons -->
         <div class="d-grid gap-2 d-md-flex mb-4">

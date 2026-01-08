@@ -15,14 +15,6 @@ exports.postLogin = async (req, res) => {
       };
       return res.redirect("/admin/login");
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      req.session.toastr = {
-        type: "error",
-        message: "Email không đúng định dạng",
-      };
-      return res.redirect("/admin/login");
-    }
 
     // 2. Gọi service để kiểm tra đăng nhập
     const user = await homeService.authenticateUser(email, password);

@@ -1,15 +1,15 @@
-<div class="container mt-4">
+<div class="container mt-4 px-3 px-md-4">
 
-    <div class="row mb-4 align-items-end">
+    <div class="row mb-4 g-3">
         
-        <div class="col-12 col-lg-6 mb-3">
+        <div class="col-12 col-lg-6">
             <label for="searchInput" class="form-label fw-bold">Tìm kiếm sản phẩm:</label>
             <div class="input-group">
                 <input 
                     type="text" 
                     id="product_search-input"
                     class="form-control" 
-                    placeholder="Nhập sách/ tác giả/ nhà xuất bản cần tìm" 
+                    placeholder="Nhập sách/ tác giả/ nhà xuất bản" 
                     aria-label="Tìm kiếm sản phẩm"
                     value="{{search}}"
                 />
@@ -17,8 +17,9 @@
                     <i class="bi bi-search"></i> Tìm kiếm
                 </button>
             </div>
-        </div>        
-        <div class="col-6 col-md-4 col-lg-4 mb-3">
+        </div>
+        
+        <div class="col-12 col-sm-6 col-lg-3">
             <label for="categorySelect" class="form-label fw-bold">Lọc loại sản phẩm:</label>
             <select id="product-filter" class="form-select">
                 <option value="">-- Chọn tất cả --</option>
@@ -36,10 +37,10 @@
     
     <hr>
     
-    <h2 class="mb-4">Danh Sách Sản Phẩm</h2>
+    <h2 class="mb-4 fs-3 fs-md-2">Danh Sách Sản Phẩm</h2>
     <div 
         id="product-list"
-        class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" 
+        class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3 g-md-4" 
     >
         {{#each products}}
             <div class="col">
@@ -56,31 +57,53 @@
                     data-author="{{this.author_name}}"
                     data-publisher="{{this.publisher_name}}"
                 >
-                    <img 
-                        src="{{this.image_path}}" 
-                        class="card-img-top product-img-fixed" 
-                        alt="Ảnh sản phẩm" 
-                    />
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title text-truncate" title="{{this.book_title}}">{{this.book_title}}</h5>
-                        <p class="card-text fw-bold mt-auto">
-                            <span class="text-danger">Giá bán: {{formatPrice this.selling_price}} VND</span>
-                            {{#if this.discount_percentage}}
-                                <span class="badge bg-danger ms-2">-{{this.discount_percentage}}%</span>
-                            {{/if}}
-                            <br>
-                            <small class="text-muted text-decoration-line-through">{{formatPrice this.original_price}} VND</small>
+                    <!-- Image Container with Fixed Aspect Ratio -->
+                    <div class="position-relative bg-light" style="padding-top: 140%; overflow: hidden;">
+                        <img 
+                            src="{{this.image_path}}" 
+                            class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" 
+                            alt="{{this.book_title}}"
+                            onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22280%22%3E%3Crect width=%22200%22 height=%22280%22 fill=%22%23e9ecef%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial, sans-serif%22 font-size=%2216%22 fill=%22%236c757d%22%3EKhông có ảnh%3C/text%3E%3C/svg%3E';"
+                        />
+                    </div>
+                    
+                    <div class="card-body d-flex flex-column p-2 p-md-3">
+                        <h5 class="card-title fs-6 fw-semibold mb-2" style="
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            overflow: hidden;
+                            min-height: 2.5rem;
+                        " title="{{this.book_title}}">
+                            {{this.book_title}}
+                        </h5>
+                        
+                        <p class="card-text fw-bold mt-auto mb-2">
+                            <span class="text-danger d-block">
+                                {{formatPrice this.selling_price}} ₫
+                                {{#if this.discount_percentage}}
+                                    <span class="badge bg-danger ms-1 fs-7">-{{this.discount_percentage}}%</span>
+                                {{/if}}
+                            </span>
+                            <small class="text-muted text-decoration-line-through d-block">
+                                {{formatPrice this.original_price}} ₫
+                            </small>
                         </p>
-                        <div class="d-grid gap-2 d-md-block mt-2">
-                            <a href="/products/{{this.book_id}}" class="btn btn-outline-secondary btn-sm">
-                                <i class="bi bi-eye"></i> Xem
-                            </a>
-                            <button type="button" class="btn btn-outline-primary btn-sm product__btn--add-to-cart" data-id="{{this.book_id}}">
-                                <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                            </button>
-                            <a href="/checkout/buy/{{this.book_id}}">                            <button type="button" class="btn btn-primary btn-sm btn-buy-now" data-book-id="{{this.book_id}}">
-                                <i class="bi bi-bag"></i> Mua
-                            </button>
+                        
+                        <!-- Responsive Button Layout -->
+                        <div class="d-flex flex-column gap-2">
+                            <div class="d-flex gap-2">
+                                <a href="/products/{{this.book_id}}" class="btn btn-outline-secondary btn-sm flex-grow-1">
+                                    <i class="bi bi-eye"></i> Xem
+                                </a>
+                                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1 product__btn--add-to-cart" data-id="{{this.book_id}}">
+                                    <i class="bi bi-cart-plus"></i> Giỏ
+                                </button>
+                            </div>
+                            <a href="/checkout/buy/{{this.book_id}}" class="w-100">
+                                <button type="button" class="btn btn-primary btn-sm w-100 btn-buy-now" data-book-id="{{this.book_id}}">
+                                    <i class="bi bi-bag"></i> Mua ngay
+                                </button>
                             </a>
                         </div>
                     </div>
@@ -91,36 +114,36 @@
 </div>
 
 <!-- Pagination -->
-<nav aria-label="Product pagination" class="mt-5 mb-5">
-    <ul class="pagination justify-content-center">
+<nav aria-label="Product pagination" class="mt-4 mt-md-5 mb-5">
+    <ul class="pagination pagination-sm justify-content-center flex-wrap">
         {{#if hasPrev}}
             <li class="page-item">
                 <a class="page-link" href="?page={{prevPage}}{{#if search}}&search={{search}}{{/if}}{{#if selectedCategoryId}}&category={{selectedCategoryId}}{{/if}}">
-                    <i class="bi bi-chevron-left"></i> Trang trước
+                    <i class="bi bi-chevron-left"></i> Trước
                 </a>
             </li>
         {{else}}
             <li class="page-item disabled">
                 <span class="page-link">
-                    <i class="bi bi-chevron-left"></i> Trang trước
+                    <i class="bi bi-chevron-left"></i> Trước
                 </span>
             </li>
         {{/if}}
 
-        <li class="page-item">
-            <span class="page-link">Trang {{page}} / {{totalPages}}</span>
+        <li class="page-item active">
+            <span class="page-link">{{page}} / {{totalPages}}</span>
         </li>
 
         {{#if hasNext}}
             <li class="page-item">
                 <a class="page-link" href="?page={{nextPage}}{{#if search}}&search={{search}}{{/if}}{{#if selectedCategoryId}}&category={{selectedCategoryId}}{{/if}}">
-                    Trang sau <i class="bi bi-chevron-right"></i>
+                    Sau <i class="bi bi-chevron-right"></i>
                 </a>
             </li>
         {{else}}
             <li class="page-item disabled">
                 <span class="page-link">
-                    Trang sau <i class="bi bi-chevron-right"></i>
+                    Sau <i class="bi bi-chevron-right"></i>
                 </span>
             </li>
         {{/if}}
@@ -128,4 +151,3 @@
 </nav>
 
 <script src="/js/client/product.js"></script>
-

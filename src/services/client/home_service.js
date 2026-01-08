@@ -49,19 +49,18 @@ exports.getAllData = async () => {
     ORDER BY b.discount_percentage DESC
     LIMIT 10;
     `;
-  const calculatePrices = (books) => {
+  const enrichBooks = (books) => {
     books.forEach((book) => {
       const avg = Number(book.avg_import_price || 0);
       const profit = Number(book.profit_percentage || 0);
       const discount = Number(book.discount_percentage || 0);
 
-      // Giá gốc trước khi giảm
       book.original_price = Math.round(avg * (1 + profit / 100));
-
-      // Giá bán sau khi giảm
       book.selling_price = Math.round(
         book.original_price * (1 - discount / 100)
       );
+
+      book.has_discount = discount > 0;
     });
   };
 
@@ -69,7 +68,7 @@ exports.getAllData = async () => {
   const [discountedBooks] = await db.query(sqlDiscountedBooks);
 
   // Tính giá cho cả 2 mảng
-  calculatePrices(newBooks);
-  calculatePrices(discountedBooks);
+  enrichBooks(newBooks);
+  enrichBooks(discountedBooks);
   return { newBooks, discountedBooks };
 };

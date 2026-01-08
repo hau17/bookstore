@@ -1,55 +1,149 @@
-<div class="container py-4">
-  <h3 class="mb-4">Đơn hàng của tôi</h3>
+<div class="container py-4 px-3 px-md-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0 fs-4 fs-md-3">
+      <i class="bi bi-bag-check"></i> Đơn hàng của tôi
+    </h3>
+    <span class="badge bg-primary rounded-pill">
+      {{#if orders.length}}{{orders.length}}{{else}}0{{/if}} đơn
+    </span>
+  </div>
 
-  <div class="row mb-3 align-items-center">
-    <div class="col-12 col-md-4">
-      <form id="order-filter-form" method="GET" action="/account/orders" class="d-flex gap-2">
-        <select name="order_status" id="order-status-filter" class="form-select">
-          <option value="">-- Tất cả trạng thái --</option>
-          <option value="1" {{#if (eq order_status '1')}}selected{{/if}}>Chờ xác nhận</option>
-          <option value="2" {{#if (eq order_status '2')}}selected{{/if}}>Đang chuẩn bị</option>
-          <option value="3" {{#if (eq order_status '3')}}selected{{/if}}>Đang giao</option>
-          <option value="4" {{#if (eq order_status '4')}}selected{{/if}}>Đã giao</option>
-          <option value="5" {{#if (eq order_status '5')}}selected{{/if}}>Đã hủy</option>
-        </select>
-
-        <button type="submit" class="btn btn-secondary d-none">Lọc</button>
+  <!-- Filter Section -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form id="order-filter-form" method="GET" action="/account/orders">
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-md-6 col-lg-4">
+            <label for="order-status-filter" class="form-label fw-semibold">
+              <i class="bi bi-funnel"></i> Lọc theo trạng thái:
+            </label>
+            <select name="order_status" id="order-status-filter" class="form-select">
+              <option value="">Tất cả trạng thái</option>
+              <option value="1" {{#if (eq order_status '1')}}selected{{/if}}>
+                <i class="bi bi-clock"></i> Chờ xác nhận
+              </option>
+              <option value="2" {{#if (eq order_status '2')}}selected{{/if}}>
+                <i class="bi bi-box-seam"></i> Đang chuẩn bị
+              </option>
+              <option value="3" {{#if (eq order_status '3')}}selected{{/if}}>
+                <i class="bi bi-truck"></i> Đang giao
+              </option>
+              <option value="4" {{#if (eq order_status '4')}}selected{{/if}}>
+                <i class="bi bi-check-circle"></i> Đã giao
+              </option>
+              <option value="5" {{#if (eq order_status '5')}}selected{{/if}}>
+                <i class="bi bi-x-circle"></i> Đã hủy
+              </option>
+            </select>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-search"></i> Áp dụng
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   </div>
+
+  <!-- Orders List -->
   {{#if orders.length}}
-    <div class="list-group">
+    <div class="row g-3">
       {{#each orders}}
-        <div class="list-group-item d-flex justify-content-between align-items-start flex-column flex-sm-row">
-          <div class="mb-2 mb-sm-0">
-            <div><strong>Mã đơn:</strong> #{{this.order_id}}</div>
-            <div><strong>Ngày:</strong> {{formatDate this.created_at}}</div>
-            <div><strong>Tổng:</strong> {{formatPrice this.total_amount}} ₫</div>
-          </div>
+        <div class="col-12">
+          <div class="card shadow-sm border-0 order-card">
+            <div class="card-body">
+              <div class="row g-3">
+                <!-- Order Info Section -->
+                <div class="col-12 col-lg-8">
+                  <div class="d-flex flex-wrap gap-3 mb-3">
+                    <div class="order-info-item">
+                      <small class="text-muted d-block">Mã đơn hàng</small>
+                      <strong class="text-primary fs-5">#{{this.order_id}}</strong>
+                    </div>
+                    <div class="order-info-item">
+                      <small class="text-muted d-block">Ngày đặt</small>
+                      <strong>
+                        <i class="bi bi-calendar3"></i> {{formatDate this.created_at}}
+                      </strong>
+                    </div>
+                    <div class="order-info-item">
+                      <small class="text-muted d-block">Tổng tiền</small>
+                      <strong class="text-danger fs-5">
+                        {{formatPrice this.total_amount}} ₫
+                      </strong>
+                    </div>
+                  </div>
+                  
+                  <!-- Status Badge -->
+                  <div class="mb-3">
+                    <span class="badge fs-6 px-3 py-2 
+                      {{#if (eq this.status_id 1)}}bg-warning text-dark{{/if}}
+                      {{#if (eq this.status_id 2)}}bg-info{{/if}}
+                      {{#if (eq this.status_id 3)}}bg-primary{{/if}}
+                      {{#if (eq this.status_id 4)}}bg-success{{/if}}
+                      {{#if (eq this.status_id 5)}}bg-secondary{{/if}}
+                    ">
+                      {{#if (eq this.status_id 1)}}<i class="bi bi-clock-history"></i>{{/if}}
+                      {{#if (eq this.status_id 2)}}<i class="bi bi-box-seam"></i>{{/if}}
+                      {{#if (eq this.status_id 3)}}<i class="bi bi-truck"></i>{{/if}}
+                      {{#if (eq this.status_id 4)}}<i class="bi bi-check-circle-fill"></i>{{/if}}
+                      {{#if (eq this.status_id 5)}}<i class="bi bi-x-circle-fill"></i>{{/if}}
+                      {{this.status_name}}
+                    </span>
+                  </div>
+                </div>
 
-          <div class="d-flex gap-2 align-items-center">
-            <span>{{ this.status_name}}</span>
+                <!-- Action Buttons Section -->
+                <div class="col-12 col-lg-4">
+                  <div class="d-flex flex-column gap-2 h-100 justify-content-center">
+                    <a 
+                      class="btn btn-outline-primary w-100" 
+                      href="/account/orders/{{this.order_id}}"
+                    >
+                      <i class="bi bi-eye"></i> Xem chi tiết
+                    </a>
 
-            <a class="btn btn-sm btn-primary" href="/account/orders/{{this.order_id}}">
-              Xem chi tiết
-            </a>
-
-            {{#if (eq this.status_id 1)}}
-              <button class="btn btn-sm btn-danger"
-                      data-bs-toggle="modal"
-                      data-bs-target="#cancel-order-modal"
-                      data-id="{{this.order_id}}"
-                      data-name="Đơn hàng #{{this.order_id}}">
-                Hủy
-              </button>
-            {{/if}}
+                    <button
+                      class="btn btn-outline-danger w-100 btn-order-cancel 
+                        {{#unless (eq this.status_id 1)}}disabled{{/unless}}"
+                      {{#if (eq this.status_id 1)}}
+                        data-id="{{this.order_id}}"
+                      {{else}}
+                        disabled
+                      {{/if}}
+                    >
+                      <i class="bi bi-x-circle"></i> 
+                      {{#if (eq this.status_id 1)}}Hủy{{else}}Không thể hủy{{/if}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       {{/each}}
     </div>
   {{else}}
-    <p>Không có đơn hàng nào.</p>
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center py-5">
+        <div class="mb-3">
+          <i class="bi bi-inbox display-1 text-muted"></i>
+        </div>
+        <h5 class="text-muted mb-3">Không có đơn hàng nào</h5>
+        <p class="text-muted mb-4">
+          {{#if order_status}}
+            Bạn chưa có đơn hàng nào với trạng thái này.
+          {{else}}
+            Bạn chưa có đơn hàng nào. Hãy bắt đầu mua sắm ngay!
+          {{/if}}
+        </p>
+        <a href="/products" class="btn btn-primary">
+          <i class="bi bi-shop"></i> Khám phá sản phẩm
+        </a>
+      </div>
+    </div>
   {{/if}}
 </div>
-<script src="/js/admin/common-modal.js"></script>
+
 <script src="/js/client/order.js"></script>

@@ -19,7 +19,11 @@ exports.getCheckoutCartPage = async (req, res) => {
     });
   } catch (err) {
     console.error("Lỗi hiển thị trang thanh toán:", err.message);
-    res.status(500).send("Lỗi server: " + err.message);
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi: " + err.message,
+    };
+    res.redirect("/cart");
   }
 };
 exports.postCheckoutCart = async (req, res) => {
@@ -44,7 +48,11 @@ exports.postCheckoutCart = async (req, res) => {
     res.redirect("/");
   } catch (error) {
     console.error("Lỗi khi xử lý thanh toán:", error.message);
-    res.status(500).send("Lỗi server: " + error.message);
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi: " + error.message,
+    };
+    res.redirect("/cart");
   }
 };
 
@@ -71,7 +79,11 @@ exports.getBuyNowPage = async (req, res) => {
     });
   } catch (err) {
     console.error("Lỗi hiển thị trang mua ngay:", err.message);
-    res.status(500).send("Lỗi server: " + err.message);
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi: " + err.message,
+    };
+    res.redirect("/");
   }
 };
 
@@ -107,7 +119,11 @@ exports.postBuyNow = async (req, res) => {
     res.redirect("/account/orders");
   } catch (error) {
     console.error("Lỗi khi xử lý mua ngay:", error);
-    res.status(500).send("Lỗi server: " + error.message);
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi: " + error.message,
+    };
+    res.redirect("/");
   }
 };
 
@@ -121,6 +137,10 @@ exports.getQRCodePage = async (req, res) => {
     res.render("client/checkout/qr", { qrImg, orderId });
   } catch (error) {
     console.error("Lỗi khi hiển thị QR code:", error.message);
-    res.status(500).send("Lỗi server: " + error.message);
+    req.session.toastr = {
+      type: "error",
+      message: "Lỗi: " + error.message,
+    };
+    res.redirect("/cart");
   }
 };

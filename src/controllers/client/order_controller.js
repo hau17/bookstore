@@ -33,7 +33,6 @@ exports.getOrderDetailsPage = async (req, res) => {
   const order_id = req.params.id;
   try {
     const orderData = await orderService.getOrderDetails({ cus_id, order_id });
-    console.log("orderData", orderData);
     res.render("client/account/order-detail", {
       layout: "main",
       order: orderData.order,
@@ -53,7 +52,11 @@ exports.getOrderDetailsPage = async (req, res) => {
 
 exports.postCancelOrder = async (req, res) => {
   if (!req.session.customer) {
-    return res.status(401).json({ error: "Unauthorized" });
+    req.session.toastr = {
+      type: "error",
+      message: "Vui lòng đăng nhập để hủy đơn hàng",
+    };
+    return res.redirect("/account/login");
   }
   const cus_id = req.session.customer.id;
   const order_id = req.params.id;

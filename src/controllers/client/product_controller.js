@@ -1,56 +1,49 @@
-const productService = require("../../services/client/product_service.js");
-const categoryService = require("../../services/admin/category_service.js");
+const productService = require("../../services/client/product_service");
+const categoryService = require("../../services/admin/category_service");
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 20;
-    const search = req.query.search || "";
-    const category = req.query.category || "";
+    const { products, pagination } =
+      await productService.getProductsWithPagination(req.query);
 
-    const { products, total } = await productService.getProductsWithLimit({
-      category: category || undefined,
-      search: search || undefined,
-      page,
-      limit,
-    });
-
-    // Lấy danh sách categories để hiển thị bộ lọc
-    const categories = await categoryService.getAll();
-
-    // Tính toán pagination
-    const totalPages = Math.ceil(total / limit);
-    const hasPrev = page > 1;
-    const hasNext = page < totalPages;
+    const categories = await categoryService.getAll({ status: 1 });
 
     res.render("client/products/list", {
       title: "Sản phẩm",
       products,
-      page,
-      search,
       categories,
-      selectedCategoryId: category,
-      hasPrev,
-      hasNext,
-      prevPage: page - 1,
-      nextPage: page + 1,
-      totalPages,
-      total,
+      selectedCategoryId: req.query.category || "",
+      search: req.query.search || "",
+      ...pagination,
     });
   } catch (error) {
-    res.status(500).send("Lỗi server nha: " + error.message);
+    console.error(error);
+    req.session.toastr = {
+      type: "error",
+      message: "Có lỗi xảy ra khi tải danh sách sản phẩm",
+    };
+    res.redirect("/");
   }
 };
 
 exports.getProductPage = async (req, res) => {
   try {
-    const id = req.params.id;
-    const product = await productService.getProductById(id);
+    const product = await productService.getProductById(req.params.id);
     if (!product) {
-      return res.status(404).send("Sản phẩm không tồn tại");
+      req.session.toastr = {
+        type: "error",
+        message: "Sản phẩm không tồn tại",
+      };
+      return res.redirect("/products");
     }
+
     res.render("client/products/detail", { product });
   } catch (error) {
-    res.status(500).send("Lỗi server nha: " + error.message);
+    console.error(error);
+    req.session.toastr = {
+      type: "error",
+      message: "Có lỗi xảy ra khi tải trang sản phẩm",
+    };
+    res.redirect("/products");
   }
 };

@@ -1,18 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize DataTable
   if ($("#importBookTable").length) {
-    $("#importBookTable").DataTable({
-      language: {
-        search: "Tìm kiếm:",
-        lengthMenu: "Hiển thị _MENU_ mục",
-        info: "Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục",
-        infoEmpty: "Không có mục nào",
-        paginate: {
-          next: "Tiếp theo",
-          previous: "Trước",
-        },
-      },
-    });
+    $("#importBookTable").DataTable();
   }
 
   // Initialize Select2 với placeholder tùy chỉnh

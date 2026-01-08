@@ -1,17 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  $("#admin-order-table").DataTable({
-    responsive: true,
-    language: {
-      search: "Tìm kiếm:",
-      lengthMenu: "Hiển thị _MENU_ mục",
-      info: "Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục",
-      infoEmpty: "Không có mục nào",
-      paginate: {
-        next: "Tiếp theo",
-        previous: "Trước",
-      },
-    },
-  });
+  $("#admin-order-table").DataTable();
 
   $(".select2").select2();
   // lọc loại đơn hàng(chưa giao/đã giao)

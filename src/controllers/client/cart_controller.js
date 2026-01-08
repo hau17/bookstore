@@ -81,6 +81,10 @@ exports.updateCartItem = async (req, res) => {
 
 exports.removeCartItem = async (req, res) => {
   if (!req.session.customer) {
+    req.session.toastr = {
+      type: "error",
+      message: "Vui lòng đăng nhập để xóa sản phẩm khỏi giỏ hàng",
+    };
     return res.redirect("/account/login");
   }
 
@@ -89,6 +93,9 @@ exports.removeCartItem = async (req, res) => {
 
   await cartService.removeCartItem(cus_id, book_id);
 
-  req.session.message = "Xóa sản phẩm thành công";
+  req.session.toastr = {
+    type: "success",
+    message: "Xóa sản phẩm khỏi giỏ hàng thành công",
+  };
   return res.redirect("/cart");
 };
