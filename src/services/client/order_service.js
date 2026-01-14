@@ -48,6 +48,7 @@ exports.getOrderById = async ({ order_id, cus_id }) => {
     LIMIT 1
   `;
   try {
+    console.log("order id ở oder service:", order_id, "cus_id:", cus_id);
     const [rows] = await db.query(sql, [order_id, cus_id]);
     if (rows.length === 0) {
       throw new Error("Đơn hàng không tồn tại");

@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const accountController = require("../../controllers/client/account_controller.js");
 const orderController = require("../../controllers/client/order_controller.js");
+const { registerValidator } = require("../../validators/register_validator");
+
 // Check authentication middleware
 const requireAuth = (req, res, next) => {
   if (!req.session.customer) {
@@ -14,7 +16,7 @@ const requireAuth = (req, res, next) => {
 router.get("/login", accountController.getLoginPage);
 router.post("/login", accountController.postLogin);
 router.get("/register", accountController.getRegisterPage);
-router.post("/register", accountController.postRegister);
+router.post("/register", registerValidator, accountController.postRegister);
 router.get("/logout", accountController.logout);
 
 // Protected routes

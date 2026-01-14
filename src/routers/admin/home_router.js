@@ -9,6 +9,7 @@ const publisherRouter = require("./publisher_router.js");
 const categoryRouter = require("./category_router.js");
 const importRouter = require("./import_router.js");
 const userRouter = require("./user_router.js");
+const accountRouter = require("./account_route.js");
 
 // Middleware kiểm tra đăng nhập admin
 function checkUser(req, res, next) {
@@ -36,6 +37,7 @@ router.use("/publishers", checkUser, publisherRouter);
 router.use("/categories", checkUser, categoryRouter);
 router.use("/imports", checkUser, importRouter);
 router.use("/users", checkUser, userRouter);
+router.use("/account", checkUser, accountRouter);
 
 // Logout route
 router.get("/logout", homeController.logout);

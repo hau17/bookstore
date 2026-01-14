@@ -2,6 +2,7 @@ const db = require("../../config/db.js");
 const orderService = require("../../services/client/order_service.js");
 const productService = require("../../services/client/product_service.js");
 const cartService = require("../../services/client/cart_service.js");
+const session = require("express-session");
 
 exports.checkoutItems = async (customerId, address, phoneNumber, paymentId) => {
   const connection = await db.getConnection();
@@ -184,11 +185,13 @@ exports.buyNow = async (
   }
 };
 
-exports.generatePaymentQRCode = async (orderId) => {
+exports.generatePaymentQRCode = async ({ orderId, customerId }) => {
   const bankCode = "TPB";
   const accountNumber = "00000202511";
-
-  const order = await orderService.getOrderById(orderId);
+  const order = await orderService.getOrderById({
+    order_id: orderId,
+    cus_id: customerId,
+  });
   if (!order) throw new Error("Order không tồn tại");
 
   // Chỉ tạo QR nếu payment là chuyển khoản

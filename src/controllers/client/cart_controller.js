@@ -20,17 +20,22 @@ exports.getCartPage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error getting cart page:", error);
-    res.status(500).send("Lỗi server: " + error.message);
+    req.session.toastr = {
+      type: "error",
+      message: "Có lỗi xảy ra khi tải giỏ hàng",
+    };
+    return res.redirect("/");
   }
 };
 
 exports.addToCart = async (req, res) => {
   try {
     if (!req.session.customer) {
-      return res.status(401).json({
-        success: false,
-        message: "Vui lòng đăng nhập để thêm vào giỏ hàng",
-      });
+      req.session.toastr = {
+        type: "error",
+        message: "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng",
+      };
+      return res.redirect("/account/login");
     }
 
     const { book_id } = req.body;

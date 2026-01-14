@@ -34,52 +34,52 @@ exports.authenticateCustomer = async (username, password) => {
   }
 };
 
-exports.registerCustomer = async (customerData) => {
+exports.registerCustomer = async ({
+  fullname,
+  email,
+  phone_number,
+  address,
+  password,
+}) => {
   try {
+    //kiểm tra
+
     // Check if email exists
     const [existingEmail] = await db.query(
       "SELECT cus_id FROM customers WHERE email = ? LIMIT 1",
-      [customerData.email]
+      [email]
     );
 
     if (existingEmail.length > 0) {
       throw new Error("Email đã được sử dụng");
     }
 
-    // Check if phone number exists
-    const [existingPhone] = await db.query(
-      "SELECT cus_id FROM customers WHERE phone_number = ? LIMIT 1",
-      [customerData.phone_number]
-    );
-
-    if (existingPhone.length > 0) {
-      throw new Error("Số điện thoại đã được sử dụng");
-    }
-
     // Hash password
-    const hashedPassword = await bcrypt.hash(customerData.password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const sql = `
       INSERT INTO customers 
-      (fullname, phone_number, address, email, password, created_at, status)
-      VALUES (?, ?, ?, ?, ?, NOW(), 1)
+      (fullname, phone_number, address, email, password)
+      VALUES (?, ?, ?, ?, ?)
     `;
     const [result] = await db.query(sql, [
-      customerData.fullname,
-      customerData.phone_number,
-      customerData.address,
-      customerData.email,
+      fullname,
+      phone_number,
+      address,
+      email,
       hashedPassword,
     ]);
+    const customerId = result.insertId;
+    console.log("New customer ID:", customerId);
     // Create an empty cart for the new customer
     const cartSql = `
       INSERT INTO carts (cus_id)
       VALUES (?)
     `;
 
-    await db.query(cartSql, [result.insertId]);
+    await db.query(cartSql, [customerId]);
 
-    return result.insertId;
+    return customerId;
   } catch (error) {
     console.error("Registration Error:", error.message);
     throw error;

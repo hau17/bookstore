@@ -110,7 +110,7 @@ exports.postBuyNow = async (req, res) => {
       phoneNumber,
       paymentId
     );
-
+    console.log("order id ở checkout :", orderId);
     if (paymentId === 2) {
       return res.redirect(`/checkout/qr?orderId=${orderId}`);
     }
@@ -131,9 +131,18 @@ exports.postBuyNow = async (req, res) => {
 exports.getQRCodePage = async (req, res) => {
   try {
     const orderId = req.query.orderId;
-    if (!orderId) return res.status(400).send("Thiếu orderId");
-
-    const qrImg = await checkoutService.generatePaymentQRCode(orderId);
+    if (!orderId) {
+      req.session.toastr = {
+        type: "error",
+        message: "Thiếu orderId để hiển thị QR code",
+      };
+      return res.redirect("/cart");
+    }
+    const customerId = req.session.customer.id;
+    const qrImg = await checkoutService.generatePaymentQRCode({
+      orderId,
+      customerId,
+    });
     res.render("client/checkout/qr", { qrImg, orderId });
   } catch (error) {
     console.error("Lỗi khi hiển thị QR code:", error.message);

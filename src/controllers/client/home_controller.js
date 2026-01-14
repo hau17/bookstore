@@ -10,6 +10,10 @@ exports.getAllData = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching data:", error);
-    res.status(500).send("Internal Server Error");
+    req.session.toastr = {
+      type: "error",
+      message: "có lỗi xảy ra khi tải trang chủ.",
+    };
+    res.redirect("/");
   }
 };

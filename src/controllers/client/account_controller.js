@@ -1,11 +1,19 @@
 const accountService = require("../../services/client/account_service.js");
+const { validationResult } = require("express-validator");
 
 exports.getLoginPage = (req, res) => {
   res.render("client/account/login", { layout: "main", title: "Đăng nhập" });
 };
 
 exports.getRegisterPage = (req, res) => {
-  res.render("client/account/register", { layout: "main", title: "Đăng ký" });
+  const formData = req.session.formData || {};
+  delete req.session.formData;
+
+  res.render("client/account/register", {
+    layout: "main",
+    title: "Đăng ký",
+    formData,
+  });
 };
 
 exports.postLogin = async (req, res) => {
@@ -47,35 +55,26 @@ exports.postLogin = async (req, res) => {
 };
 
 exports.postRegister = async (req, res) => {
-  const { fullname, email, phone_number, address, password, confirm_password } =
-    req.body;
+  const errors = validationResult(req);
+  const { fullname, email, phone_number, address, password } = req.body;
+
+  if (!errors.isEmpty()) {
+    req.session.toastr = {
+      type: "error",
+      message: errors.array()[0].msg,
+    };
+
+    req.session.formData = {
+      fullname,
+      email,
+      phone_number,
+      address,
+    };
+
+    return res.redirect("/account/register");
+  }
 
   try {
-    // 1. Validate input
-    if (
-      !fullname ||
-      !email ||
-      !phone_number ||
-      !address ||
-      !password ||
-      !confirm_password
-    ) {
-      req.session.toastr = {
-        type: "error",
-        message: "Vui lòng điền đầy đủ thông tin",
-      };
-      return res.redirect("/account/register");
-    }
-
-    if (password !== confirm_password) {
-      req.session.toastr = {
-        type: "error",
-        message: "Mật khẩu xác nhận không khớp",
-      };
-      return res.redirect("/account/register");
-    }
-
-    // 2. Register new customer
     const customerId = await accountService.registerCustomer({
       fullname,
       email,
@@ -84,37 +83,46 @@ exports.postRegister = async (req, res) => {
       password,
     });
 
-    // 3. Flash success message and redirect to login
-    req.session.toastr = {
-      type: "success",
-      message: "Đăng ký tài khoản thành công! .",
-    };
+    // auto login
     req.session.customer = {
       id: customerId,
-      email: email,
-      fullname: fullname,
+      email,
+      fullname,
+    };
+
+    req.session.toastr = {
+      type: "success",
+      message: "Đăng ký tài khoản thành công!",
     };
 
     res.redirect("/account");
   } catch (err) {
-    console.error("Lỗi đăng ký:", err.message);
     req.session.toastr = {
       type: "error",
-      message: err.message || "Có lỗi xảy ra khi đăng ký!",
+      message: err.message || "Có lỗi xảy ra khi đăng ký",
     };
-    return res.redirect("/account/register");
+
+    req.session.formData = {
+      fullname,
+      email,
+      phone_number,
+      address,
+    };
+
+    res.redirect("/account/register");
   }
 };
 
 exports.logout = (req, res) => {
+  req.session.toastr = {
+    type: "success",
+    message: "Đăng xuất thành công!",
+  };
+
   req.session.destroy((err) => {
     if (err) {
       console.error("Lỗi đăng xuất:", err);
     }
-    req.session.toastr = {
-      type: "success",
-      message: "Đăng xuất thành công!",
-    };
     res.redirect("/");
   });
 };

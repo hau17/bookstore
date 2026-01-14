@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const data = await res.json();
 
         if (data.success) {
-          toastr.success("Cập nhật số lượng thành công");
+          toastr.success(data.message || "Cập nhật số lượng thành công");
           location.reload(); // hoặc update trực tiếp DOM nếu muốn
         } else {
           toastr.error(data.message);
