@@ -16,6 +16,8 @@ exports.getCartPage = async (req, res) => {
       layout: "main",
       cartItems: cartItems.products,
       grandTotal: cartItems.grandTotal,
+      shippingFee: cartItems.shippingFee,
+      finalTotal: cartItems.finalTotal,
       title: "Giỏ hàng",
     });
   } catch (error) {

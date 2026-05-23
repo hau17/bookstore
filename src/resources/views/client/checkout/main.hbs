@@ -94,6 +94,9 @@
         </div>
         <div class="card-body">
           <form method="POST" action="{{#if (eq mode 'cart')}}/checkout/cart{{else}}/checkout/buy/{{products.[0].book_id}}{{/if}}">
+            {{#if (eq mode 'buy-now')}}
+              <input type="hidden" name="quantity" value="{{products.[0].quantity}}" />
+            {{/if}}
 
             <!-- Delivery Address -->
             <div class="mb-3">
@@ -168,14 +171,18 @@
               
               <div class="d-flex justify-content-between mb-2">
                 <span class="text-muted">Phí vận chuyển:</span>
+                {{#if (eq shippingFee 0)}}
                 <span class="text-success">Miễn phí</span>
+                {{else}}
+                <span>{{formatPrice shippingFee}} ₫</span>
+                {{/if}}
               </div>
               
               <hr>
               
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="fs-5 fw-bold">Tổng cộng:</span>
-                <strong class="text-danger fs-4">{{formatPrice grandTotal}} ₫</strong>
+                <strong class="text-danger fs-4">{{formatPrice finalTotal}} ₫</strong>
               </div>
             </div>
 

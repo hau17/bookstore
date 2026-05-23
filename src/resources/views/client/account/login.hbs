@@ -19,8 +19,7 @@
               />
             </div>
 
-            <div class="mb-3">
-              <label for="password" class="form-label">Mật khẩu</label>
+            <div class="mb-3 input-group">
               <input
                 type="password"
                 class="form-control"
@@ -28,6 +27,13 @@
                 name="password"
                 required
               />
+              <span
+                class="input-group-text"
+                id="togglePassword"
+                style="cursor: pointer;"
+              >
+                <i class="bi bi-eye"></i>
+              </span>
             </div>
 
             <div class="d-grid gap-2">
@@ -44,3 +50,4 @@
     </div>
   </div>
 </div>
+<script src="/js/client/login.js"></script>

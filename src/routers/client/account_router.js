@@ -2,7 +2,12 @@ const express = require("express");
 const router = express.Router();
 const accountController = require("../../controllers/client/account_controller.js");
 const orderController = require("../../controllers/client/order_controller.js");
-const { registerValidator } = require("../../validators/register_validator");
+const {
+  registerValidator,
+} = require("../../validators/client/register_validator.js");
+const {
+  editAccountValidator,
+} = require("../../validators/client/account_validator.js");
 
 // Check authentication middleware
 const requireAuth = (req, res, next) => {
@@ -22,7 +27,12 @@ router.get("/logout", accountController.logout);
 // Protected routes
 router.get("/", requireAuth, accountController.getAccountPage);
 router.get("/edit", requireAuth, accountController.getEditAccountPage);
-router.post("/edit", requireAuth, accountController.postUpdateAccount);
+router.post(
+  "/edit",
+  requireAuth,
+  editAccountValidator,
+  accountController.postUpdateAccount
+);
 router.get(
   "/change-password",
   requireAuth,

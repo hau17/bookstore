@@ -9,20 +9,6 @@
           </h5>
         </div>
         <div class="card-body">
-          {{#if toastr}}
-            <div
-              class="alert alert-{{toastr.type}} alert-dismissible fade show"
-              role="alert"
-            >
-              {{toastr.message}}
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-              ></button>
-            </div>
-          {{/if}}
-
           <form method="POST" action="/account/edit" id="editForm">
             <div class="mb-3">
               <label for="fullname" class="form-label">Họ và tên:</label>

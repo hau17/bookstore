@@ -6,7 +6,7 @@ const productService = require("../../services/client/product_service.js");
 exports.getCheckoutCartPage = async (req, res) => {
   try {
     const customerId = req.session.customer.id;
-    const { products, grandTotal } = await cartService.getAllProducts(
+    const { products, grandTotal, shippingFee, finalTotal } = await cartService.getAllProducts(
       customerId
     );
     const customer = await account_service.getCustomerById(customerId);
@@ -14,6 +14,8 @@ exports.getCheckoutCartPage = async (req, res) => {
       title: "Thanh toán giỏ hàng",
       products,
       grandTotal,
+      shippingFee,
+      finalTotal,
       customer,
       mode: "cart",
     });
@@ -69,11 +71,15 @@ exports.getBuyNowPage = async (req, res) => {
     product.quantity = quantity;
     const customer = await account_service.getCustomerById(customerId);
     //tính tổng tiền
-    const grandTotal = product.selling_price * quantity;
+    const grandTotal = Number(product.selling_price) * Number(quantity);
+    const shippingFee = grandTotal >= 100000 ? 0 : 30000;
+    const finalTotal = grandTotal + shippingFee;
     res.render("client/checkout/main", {
       title: "Mua hàng",
       products: [product],
       grandTotal,
+      shippingFee,
+      finalTotal,
       customer,
       mode: "buy-now",
     });

@@ -4,10 +4,11 @@
   <form
     method="POST"
     action="/admin/login"
-    class="p-4 border rounded shadow-sm"
-    style="width: 360px; background: #fff;"
+    class="p-4 border rounded shadow-sm bg-white"
+    style="width: 360px;"
   >
 
+    <!-- Email -->
     <div class="mb-3">
       <label for="email" class="form-label">Email</label>
       <input
@@ -21,19 +22,33 @@
       />
     </div>
 
-    <div class="mb-3">
+    <!-- Password -->
+    <div class="mb-4">
       <label for="password" class="form-label">Mật khẩu</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        class="form-control"
-        placeholder="Nhập mật khẩu"
-        required
-      />
+      <div class="input-group">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-control"
+          placeholder="Nhập mật khẩu"
+          required
+        />
+        <span
+          class="input-group-text"
+          id="togglePassword"
+          style="cursor: pointer;"
+        >
+          <i class="bi bi-eye"></i>
+        </span>
+      </div>
     </div>
 
-    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+    <button type="submit" class="btn btn-primary w-100">
+      Đăng nhập
+    </button>
 
   </form>
 </div>
+
+<script src="/js/admin/login.js"></script>

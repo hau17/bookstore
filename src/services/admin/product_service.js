@@ -178,23 +178,23 @@ exports.delete = async (id) => {
   }
 };
 
-exports.addImport = async ({ book_id, quantity, import_price }) => {
-  // Compute new average import price and increment stock
-  const sql = `
-    UPDATE books
-    SET
-      avg_import_price = (COALESCE(avg_import_price,0) * stock_quantity + ? * ?) / (stock_quantity + ?),
-      stock_quantity = stock_quantity + ?
-    WHERE book_id = ?`;
+// exports.addImport = async ({ book_id, quantity, import_price }) => {
+//   // Compute new average import price and increment stock
+//   const sql = `
+//     UPDATE books
+//     SET
+//       avg_import_price = (COALESCE(avg_import_price,0) * stock_quantity + ? * ?) / (stock_quantity + ?),
+//       stock_quantity = stock_quantity + ?
+//     WHERE book_id = ?`;
 
-  // params: import_price, quantity, quantity (for denom), quantity (increase), book_id
-  const values = [import_price, quantity, quantity, quantity, book_id];
+//   // params: import_price, quantity, quantity (for denom), quantity (increase), book_id
+//   const values = [import_price, quantity, quantity, quantity, book_id];
 
-  try {
-    const [result] = await db.query(sql, values);
-    return result.affectedRows;
-  } catch (error) {
-    console.error("Error adding import:", error);
-    throw new Error("Database update failed: " + error.message);
-  }
-};
+//   try {
+//     const [result] = await db.query(sql, values);
+//     return result.affectedRows;
+//   } catch (error) {
+//     console.error("Error adding import:", error);
+//     throw new Error("Database update failed: " + error.message);
+//   }
+// };

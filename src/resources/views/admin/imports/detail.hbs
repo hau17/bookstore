@@ -1,0 +1,154 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Chi tiết phiếu nhập #{{importHeader.import_id}}</h2>
+  <a href="/admin/imports" class="btn btn-secondary">← Quay lại</a>
+</div>
+
+{{!-- Status Badge --}}
+{{#if (eq importHeader.status 0)}}
+  <span class="badge bg-secondary fs-6 mb-3">Nháp</span>
+{{/if}}
+{{#if (eq importHeader.status 1)}}
+  <span class="badge bg-warning text-dark fs-6 mb-3">Chờ duyệt</span>
+{{/if}}
+{{#if (eq importHeader.status 2)}}
+  <span class="badge bg-success fs-6 mb-3">Đã duyệt</span>
+{{/if}}
+
+{{!-- Alert lý do từ chối (chỉ hiện khi có reject_reason và đang ở Draft) --}}
+{{#if importHeader.reject_reason}}
+<div class="alert alert-warning d-flex align-items-start mt-2" role="alert">
+  <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
+  <div>
+    <strong>Lý do bị từ chối:</strong><br>
+    {{importHeader.reject_reason}}
+  </div>
+</div>
+{{/if}}
+
+{{!-- Thông tin phiếu --}}
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <p class="mb-1"><strong>Nhà xuất bản:</strong> {{importHeader.publisher_name}}</p>
+        <p class="mb-1"><strong>Ngày tạo:</strong> {{formatDate importHeader.created_at}}</p>
+        <p class="mb-1"><strong>Tạo bởi:</strong> {{importHeader.created_by_name}}</p>
+      </div>
+      <div class="col-md-6">
+        {{#if importHeader.approved_by}}
+        <p class="mb-1"><strong>Duyệt bởi:</strong> {{importHeader.approved_by_name}}</p>
+        <p class="mb-1"><strong>Ngày duyệt:</strong> {{formatDate importHeader.approved_at}}</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- Bảng chi tiết sách --}}
+<table class="table table-bordered table-hover">
+  <thead class="table-light">
+    <tr>
+      <th>#</th>
+      <th>Tên sách</th>
+      <th class="text-center">Số lượng</th>
+      <th class="text-end">Giá nhập</th>
+      <th class="text-end">Thành tiền</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each importDetails}}
+    <tr>
+      <td>{{@index}}</td>
+      <td>{{this.book_title}}</td>
+      <td class="text-center">{{this.quantity}}</td>
+      <td class="text-end">{{formatPrice this.import_price}} đ</td>
+      <td class="text-end">{{formatPrice this.line_total}} đ</td>
+    </tr>
+    {{/each}}
+  </tbody>
+  <tfoot class="table-light">
+    <tr>
+      <td colspan="2" class="text-end fw-bold">Tổng cộng:</td>
+      <td class="text-center fw-bold">{{total_quantity}}</td>
+      <td></td>
+      <td class="text-end fw-bold">{{formatPrice total_cost}} đ</td>
+    </tr>
+  </tfoot>
+</table>
+
+{{!-- Action Buttons --}}
+<div class="d-flex gap-2 mt-4 flex-wrap">
+
+  {{!-- Staff + Draft: Gửi duyệt & Xóa --}}
+  {{#if (eq userRole 'staff')}}
+    {{#if (eq importHeader.status 0)}}
+      <form method="POST" action="/admin/imports/{{importHeader.import_id}}/submit?_method=PATCH">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-send"></i> Gửi duyệt
+        </button>
+      </form>
+      <a href="/admin/imports/{{importHeader.import_id}}/edit" class="btn btn-warning">
+        <i class="bi bi-pencil-square"></i> Chỉnh sửa
+      </a>
+      <form method="POST" action="/admin/imports/{{importHeader.import_id}}?_method=DELETE"
+            onsubmit="return confirm('Xác nhận xóa phiếu nhập này?')">
+        <button type="submit" class="btn btn-outline-danger">
+          <i class="bi bi-trash"></i> Xóa phiếu
+        </button>
+      </form>
+    {{/if}}
+
+    {{!-- Staff + Pending: Hủy gửi duyệt --}}
+    {{#if (eq importHeader.status 1)}}
+      <form method="POST" action="/admin/imports/{{importHeader.import_id}}/recall?_method=PATCH">
+        <button type="submit" class="btn btn-warning">
+          <i class="bi bi-arrow-counterclockwise"></i> Hủy gửi duyệt
+        </button>
+      </form>
+    {{/if}}
+  {{/if}}
+
+  {{!-- Manager/Admin + Pending: Duyệt & Từ chối --}}
+  {{#if canManage}}
+    {{#if (eq importHeader.status 1)}}
+      <form method="POST" action="/admin/imports/{{importHeader.import_id}}/approve?_method=PATCH"
+            onsubmit="return confirm('Xác nhận duyệt phiếu? Tồn kho sẽ được cập nhật ngay.')">
+        <button type="submit" class="btn btn-success">
+          <i class="bi bi-check-circle"></i> Duyệt phiếu
+        </button>
+      </form>
+      <button type="button" class="btn btn-danger"
+              data-bs-toggle="modal" data-bs-target="#rejectModal">
+        <i class="bi bi-x-circle"></i> Từ chối
+      </button>
+    {{/if}}
+  {{/if}}
+
+</div>
+
+{{!-- Modal nhập lý do từ chối (chỉ render khi status=1) --}}
+{{#if (eq importHeader.status 1)}}
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Từ chối phiếu nhập #{{importHeader.import_id}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="/admin/imports/{{importHeader.import_id}}/reject?_method=PATCH">
+        <div class="modal-body">
+          <label class="form-label fw-semibold">
+            Lý do từ chối <span class="text-danger">*</span>
+          </label>
+          <textarea class="form-control" name="reject_reason" rows="4" required
+            placeholder="Nhập lý do từ chối để Staff có thể chỉnh sửa và gửi lại..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-danger">Xác nhận từ chối</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{{/if}}

@@ -23,10 +23,11 @@ USE `book_store`;
 CREATE TABLE IF NOT EXISTS `authors` (
   `author_id` int(11) NOT NULL AUTO_INCREMENT,
   `author_name` varchar(100) NOT NULL,
+  `email` varchar(50) DEFAULT NULL,
   `description` text DEFAULT NULL,
-  `status` enum('0','1') DEFAULT '1',
+  `status` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`author_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -44,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `books` (
   `description` text DEFAULT NULL,
   `image_path` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `status` tinyint(4) NOT NULL DEFAULT 1,
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`book_id`),
   KEY `category_id` (`category_id`),
   KEY `author_id` (`author_id`),
@@ -52,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `books` (
   CONSTRAINT `books_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`) ON DELETE SET NULL,
   CONSTRAINT `books_ibfk_2` FOREIGN KEY (`author_id`) REFERENCES `authors` (`author_id`) ON DELETE SET NULL,
   CONSTRAINT `books_ibfk_3` FOREIGN KEY (`publisher_id`) REFERENCES `publishers` (`publisher_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -63,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `carts` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`cart_id`),
   KEY `user_id` (`cus_id`) USING BTREE,
-  CONSTRAINT `cart_cus` FOREIGN KEY (`cus_id`) REFERENCES `customers` (`cus_id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `FK_carts_users` FOREIGN KEY (`cus_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
@@ -88,32 +89,28 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `description` text DEFAULT NULL,
   `status` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- Data exporting was unselected.
-
--- Dumping structure for table book_store.customers
-CREATE TABLE IF NOT EXISTS `customers` (
-  `cus_id` int(11) NOT NULL AUTO_INCREMENT,
-  `fullname` varchar(255) NOT NULL DEFAULT '0',
-  `phone_number` varchar(255) NOT NULL DEFAULT '0',
-  `address` varchar(255) DEFAULT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `status` tinyint(1) DEFAULT 1,
-  PRIMARY KEY (`cus_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table book_store.imports
 CREATE TABLE IF NOT EXISTS `imports` (
   `import_id` int(11) NOT NULL AUTO_INCREMENT,
+  `reject_reason` text NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `publisher_id` int(11) NOT NULL,
-  PRIMARY KEY (`import_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `created_by` int(11) DEFAULT NULL,
+  `approved_by` int(11) DEFAULT NULL,
+  `approved_at` datetime DEFAULT current_timestamp(),
+  `status` tinyint(4) DEFAULT 0,
+  PRIMARY KEY (`import_id`) USING BTREE,
+  KEY `publisher` (`publisher_id`),
+  KEY `approve by` (`approved_by`),
+  KEY `created by` (`created_by`),
+  CONSTRAINT `approve by` FOREIGN KEY (`approved_by`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `created by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `publisher` FOREIGN KEY (`publisher_id`) REFERENCES `publishers` (`publisher_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -129,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `import_details` (
   KEY `book` (`book_id`),
   CONSTRAINT `book` FOREIGN KEY (`book_id`) REFERENCES `books` (`book_id`) ON DELETE SET NULL,
   CONSTRAINT `import` FOREIGN KEY (`import_id`) REFERENCES `imports` (`import_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -138,19 +135,23 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
   `cus_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `subtotal` decimal(10,2) NOT NULL,
+  `shipping_fee` decimal(10,2) NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
+  `total_quantity` int(11) DEFAULT NULL,
   `address` varchar(100) NOT NULL DEFAULT '',
+  `phone_number` varchar(10) DEFAULT NULL,
   `status_id` int(11) DEFAULT 1,
   `payment_id` int(11) DEFAULT NULL,
   `payment_status` enum('0','1') DEFAULT '0',
   PRIMARY KEY (`order_id`),
   KEY `order_payment` (`payment_id`),
-  KEY `cus` (`cus_id`),
   KEY `status` (`status_id`),
-  CONSTRAINT `cus` FOREIGN KEY (`cus_id`) REFERENCES `customers` (`cus_id`) ON DELETE SET NULL,
+  KEY `FK_orders_users` (`cus_id`),
+  CONSTRAINT `FK_orders_users` FOREIGN KEY (`cus_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL,
   CONSTRAINT `order_payment` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`payment_id`) ON DELETE SET NULL,
   CONSTRAINT `status` FOREIGN KEY (`status_id`) REFERENCES `order_status` (`status_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -161,12 +162,13 @@ CREATE TABLE IF NOT EXISTS `order_details` (
   `book_id` int(11) DEFAULT NULL,
   `quantity` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL,
+  `total_amount` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`order_detail_id`),
   KEY `order_id` (`order_id`),
   KEY `book_id` (`book_id`),
   CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
   CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`book_id`) REFERENCES `books` (`book_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -190,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `order_status_history` (
   KEY `status_id` (`status_id`),
   CONSTRAINT `order_status_history_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
   CONSTRAINT `order_status_history_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `order_status` (`status_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -209,10 +211,11 @@ CREATE TABLE IF NOT EXISTS `publishers` (
   `publisher_name` varchar(100) NOT NULL,
   `address` varchar(255) DEFAULT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`publisher_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -222,11 +225,13 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `fullname` varchar(100) DEFAULT NULL,
-  `role` enum('admin','manager','staff') DEFAULT NULL,
+  `role` enum('admin','manager','staff','customer') DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `status` tinyint(4) NOT NULL DEFAULT 1,
+  `phone_number` varchar(255) DEFAULT NULL,
+  `address` text DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 

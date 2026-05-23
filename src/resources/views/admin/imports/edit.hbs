@@ -1,0 +1,103 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Chỉnh sửa phiếu nhập #{{importHeader.import_id}}</h2>
+  <a href="/admin/imports/{{importHeader.import_id}}" class="btn btn-secondary">← Quay lại</a>
+</div>
+
+{{!-- Publisher Dropdown (editable) --}}
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="row align-items-center">
+      <div class="col-md-5">
+        <label for="publisherSelect" class="form-label fw-semibold mb-1">
+          Nhà xuất bản <span class="text-danger">*</span>
+        </label>
+        <select id="publisherSelect"
+                class="form-select select2"
+                data-import-id="{{importHeader.import_id}}">
+          {{#each publishers}}
+            <option value="{{this.publisher_id}}"
+              {{#if (eq ../activePublisherId this.publisher_id)}}selected{{/if}}>
+              {{this.publisher_name}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+
+  {{!-- Cột trái: Bảng sách của NXB --}}
+  <div class="col-md-6">
+    <h5 class="mb-2">Danh sách sách của NXB</h5>
+    {{#if books}}
+    <table id="editBookTable"
+           class="table table-bordered table-hover align-middle display w-100">
+      <thead class="table-light">
+        <tr>
+          <th>Tên sách</th>
+          <th>Tác giả</th>
+          <th class="text-center">Tồn kho</th>
+          <th class="text-end">Giá TB nhập</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each books}}
+        <tr style="cursor:pointer"
+            data-book-id="{{this.book_id}}"
+            data-title="{{this.book_title}}"
+            data-avg-price="{{this.avg_import_price}}"
+            {{#if this.checked}}data-preselected="true"{{/if}}
+            data-prefill-qty="{{this.prefill_qty}}"
+            data-prefill-price="{{this.prefill_price}}">
+          <td>{{this.book_title}}</td>
+          <td>{{this.author_name}}</td>
+          <td class="text-center">{{this.stock_quantity}}</td>
+          <td class="text-end">{{formatPrice this.avg_import_price}} đ</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+    <div class="alert alert-warning">
+      Không có sách nào thuộc nhà xuất bản này.
+    </div>
+    {{/if}}
+  </div>
+
+  {{!-- Cột phải: Panel sách đã chọn + Form --}}
+  <div class="col-md-6">
+    <h5 class="mb-2">
+      Sách đã chọn
+      <span id="selectedCount" class="badge bg-primary ms-1">0</span>
+    </h5>
+
+    <form id="editImportForm"
+          method="POST"
+          action="/admin/imports/{{importHeader.import_id}}/edit?_method=PATCH">
+
+      {{!-- publisher_id được ghi lại từ SSR (activePublisherId), không đổi bằng JS --}}
+      <input type="hidden" name="publisher_id"
+             id="publisherIdHidden" value="{{activePublisherId}}">
+
+      <div id="selectedBooks" class="mb-3">
+        <p id="emptyHint" class="text-muted fst-italic">
+          Nhấn vào sách ở bảng bên trái để thêm
+        </p>
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-success">
+          <i class="bi bi-floppy"></i> Lưu thay đổi
+        </button>
+        <a href="/admin/imports/{{importHeader.import_id}}" class="btn btn-outline-secondary">
+          Hủy
+        </a>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<script src="/js/admin/import_edit.js"></script>

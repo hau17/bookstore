@@ -12,10 +12,6 @@ exports.registerValidator = [
 
   body("address").trim().notEmpty().withMessage("Địa chỉ không được để trống"),
 
-  body("password")
-    .isLength({ min: 6 })
-    .withMessage("Mật khẩu tối thiểu 6 ký tự"),
-
   body("confirm_password").custom((value, { req }) => {
     if (value !== req.body.password) {
       throw new Error("Mật khẩu xác nhận không khớp");

@@ -9,8 +9,12 @@
       </li>
     {{/if}}
 
-    {{! ROLE: admin + staff → xem đơn hàng }}
-    {{#if (or (eq user.role "admin") (eq user.role "staff"))}}
+    {{! ROLE: admin + staff + manager → xem đơn hàng }}
+    {{#if
+      (or
+        (eq user.role "admin") (eq user.role "staff") (eq user.role "manager")
+      )
+    }}
       <li class="nav-item mb-2">
         <a href="/admin/orders" class="nav-link text-white">Đơn hàng</a>
       </li>
@@ -34,9 +38,6 @@
         <a href="/admin/categories" class="nav-link text-white">Loại sản phẩm</a>
       </li>
 
-      <li class="nav-item mb-2">
-        <a href="/admin/imports" class="nav-link text-white">Nhập sách</a>
-      </li>
     {{/if}}
 
     {{! ROLE: admin → quản lý nhân viên }}
@@ -45,6 +46,10 @@
         <a href="/admin/users" class="nav-link text-white">Quản lí nhân viên</a>
       </li>
     {{/if}}
+    <li class="nav-item mb-2">
+      <a href="/admin/imports" class="nav-link text-white">Nhập sách</a>
+    </li>
+
     <li class="nav-item mb-2">
       <a href="/admin/account" class="nav-link text-white">Tài khoản của tôi</a>
     </li>

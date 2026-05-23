@@ -11,7 +11,7 @@ exports.checkoutItems = async (customerId, address, phoneNumber, paymentId) => {
     await connection.beginTransaction();
 
     // 1. Lấy danh sách sản phẩm trong giỏ hàng
-    const { products, grandTotal } = await cartService.getAllProducts(
+    const { products, grandTotal, shippingFee, finalTotal } = await cartService.getAllProducts(
       customerId
     );
 
@@ -41,7 +41,7 @@ exports.checkoutItems = async (customerId, address, phoneNumber, paymentId) => {
     `;
     const [orderResult] = await connection.execute(insertOrderSql, [
       customerId,
-      grandTotal,
+      finalTotal,
       totalQuantity,
       address,
       phoneNumber,
@@ -123,7 +123,9 @@ exports.buyNow = async (
     if (!book) throw new Error("Sản phẩm không tồn tại");
     if (quantity > book.stock_quantity) throw new Error("Không đủ hàng");
 
-    const total_amount = (Number(book.selling_price) || 0) * Number(quantity);
+    const grandTotal = Number((Number(book.selling_price) || 0) * Number(quantity));
+    const shippingFee = grandTotal >= 100000 ? 0 : 30000;
+    const finalTotal = grandTotal + shippingFee;
 
     const Ordersql = `
       INSERT INTO orders (cus_id, total_amount, total_quantity, address, phone_number, payment_id)
@@ -139,7 +141,7 @@ exports.buyNow = async (
 
     const [result] = await connection.execute(Ordersql, [
       customerId,
-      total_amount,
+      finalTotal,
       quantity,
       addressParam,
       phoneParam,

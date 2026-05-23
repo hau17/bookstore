@@ -1,11 +1,11 @@
 const db = require("../../config/db.js");
 
 exports.getAll = async ({ status }) => {
-  let sql = "SELECT * FROM customers";
+  let sql = "SELECT user_id as cus_id, fullname, email, phone_number, address, status, created_at FROM users WHERE role = 'customer'";
   const params = [];
 
   if (status === "1" || status === "0") {
-    sql += " WHERE status = ?";
+    sql += " AND status = ?";
     params.push(status);
   }
 
@@ -15,7 +15,8 @@ exports.getAll = async ({ status }) => {
 
 exports.getCustomerById = async (id) => {
   const sql = `
-    SELECT * FROM customers WHERE cus_id = ?
+    SELECT user_id as cus_id, fullname, email, phone_number, address, status, created_at 
+    FROM users WHERE user_id = ? AND role = 'customer'
   `;
   const [rows] = await db.query(sql, [id]);
   return rows[0];
@@ -23,7 +24,7 @@ exports.getCustomerById = async (id) => {
 
 exports.lockCustomer = async (id) => {
   const [rows] = await db.query(
-    "SELECT status FROM customers WHERE cus_id = ?",
+    "SELECT status FROM users WHERE user_id = ? AND role = 'customer'",
     [id]
   );
 
@@ -35,11 +36,11 @@ exports.lockCustomer = async (id) => {
 
   if (statusNow === 0 || statusNow === "0") {
     // Nếu đang khóa -> mở khóa
-    const sqlUnlock = "UPDATE customers SET status = ? WHERE cus_id = ?";
+    const sqlUnlock = "UPDATE users SET status = ? WHERE user_id = ? AND role = 'customer'";
     await db.query(sqlUnlock, [1, id]);
   } else {
     // Nếu đang hoạt động -> khóa
-    const sqlLock = "UPDATE customers SET status = ? WHERE cus_id = ?";
+    const sqlLock = "UPDATE users SET status = ? WHERE user_id = ? AND role = 'customer'";
     await db.query(sqlLock, [0, id]);
   }
 };

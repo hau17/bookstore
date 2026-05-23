@@ -6,13 +6,13 @@ exports.getLoginPage = (req, res) => {
 };
 
 exports.getRegisterPage = (req, res) => {
-  const formData = req.session.formData || {};
-  delete req.session.formData;
+  const registerFormData = req.session.registerFormData || {};
+  delete req.session.registerFormData;
 
   res.render("client/account/register", {
     layout: "main",
     title: "Đăng ký",
-    formData,
+    registerFormData,
   });
 };
 
@@ -64,7 +64,7 @@ exports.postRegister = async (req, res) => {
       message: errors.array()[0].msg,
     };
 
-    req.session.formData = {
+    req.session.registerFormData = {
       fullname,
       email,
       phone_number,
@@ -102,7 +102,7 @@ exports.postRegister = async (req, res) => {
       message: err.message || "Có lỗi xảy ra khi đăng ký",
     };
 
-    req.session.formData = {
+    req.session.registerFormData = {
       fullname,
       email,
       phone_number,
@@ -150,11 +150,14 @@ exports.getEditAccountPage = async (req, res) => {
     return res.redirect("/account/login");
   }
   const id = req.session.customer.id;
+  const editFormData = req.session.editFormData || {};
+  delete req.session.editFormData;
+
   try {
     const customer = await accountService.getCustomerById(id);
     res.render("client/account/edit", {
       layout: "main",
-      customer,
+      customer: { ...customer, ...editFormData },
       title: "Cập nhật thông tin",
     });
   } catch (err) {
@@ -167,18 +170,28 @@ exports.postUpdateAccount = async (req, res) => {
   if (!req.session.customer) {
     return res.redirect("/account/login");
   }
+
+  const errors = validationResult(req);
   const id = req.session.customer.id;
   const { fullname, email, phone_number, address } = req.body;
 
-  try {
-    if (!fullname || !email || !phone_number || !address) {
-      req.session.toastr = {
-        type: "error",
-        message: "Vui lòng điền đầy đủ thông tin",
-      };
-      return res.redirect("/account/edit");
-    }
+  if (!errors.isEmpty()) {
+    req.session.toastr = {
+      type: "error",
+      message: errors.array()[0].msg,
+    };
 
+    req.session.editFormData = {
+      fullname,
+      email,
+      phone_number,
+      address,
+    };
+
+    return res.redirect("/account/edit");
+  }
+
+  try {
     await accountService.updateCustomer(id, {
       fullname,
       email,
@@ -197,6 +210,14 @@ exports.postUpdateAccount = async (req, res) => {
     res.redirect("/account");
   } catch (err) {
     console.error("Lỗi cập nhật:", err.message);
+
+    req.session.editFormData = {
+      fullname,
+      email,
+      phone_number,
+      address,
+    };
+
     req.session.toastr = {
       type: "error",
       message: err.message || "Cập nhật thất bại!",

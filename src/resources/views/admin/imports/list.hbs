@@ -1,78 +1,54 @@
-<h2>Lịch sử nhập sách</h2>
+<h2>Danh sách phiếu nhập</h2>
 
 <div class="mb-3 d-flex justify-content-between align-items-center">
-  <div>
-    <a href="/admin/imports/new" class="btn btn-primary">Nhập hàng</a>
-  </div>
+  <a href="/admin/imports/new" class="btn btn-primary">+ Tạo phiếu nhập</a>
+
+  <form method="GET" action="/admin/imports">
+    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()"
+            style="min-width:160px">
+      <option value="">Tất cả trạng thái</option>
+      <option value="0" {{#if (eq selectedStatus '0')}}selected{{/if}}>Nháp</option>
+      <option value="1" {{#if (eq selectedStatus '1')}}selected{{/if}}>Chờ duyệt</option>
+      <option value="2" {{#if (eq selectedStatus '2')}}selected{{/if}}>Đã duyệt</option>
+    </select>
+  </form>
 </div>
 
-<table id="importsTable" class="display">
+<table id="importsTable" class="display w-100">
   <thead>
     <tr>
       <th>ID</th>
+      <th>Trạng thái</th>
       <th>Nhà xuất bản</th>
-      <th>Tổng số lượng</th>
+      <th>Người tạo</th>
+      <th>Tổng SL</th>
       <th>Tổng chi phí</th>
-      <th>Ngày</th>
+      <th>Ngày tạo</th>
     </tr>
   </thead>
   <tbody>
     {{#each imports}}
-      <tr class="import__row--click" data-id="{{this.import_id}}">
+      <tr class="import__row--click" data-id="{{this.import_id}}" style="cursor:pointer">
         <td>{{this.import_id}}</td>
+        <td>
+          {{#if (eq this.status 0)}}
+            <span class="badge bg-secondary">Nháp</span>
+          {{/if}}
+          {{#if (eq this.status 1)}}
+            <span class="badge bg-warning text-dark">Chờ duyệt</span>
+          {{/if}}
+          {{#if (eq this.status 2)}}
+            <span class="badge bg-success">Đã duyệt</span>
+          {{/if}}
+        </td>
         <td>{{this.publisher_name}}</td>
+        <td>{{this.created_by_name}}</td>
         <td>{{this.total_quantity}}</td>
-        <td>{{formatPrice this.total_cost}}</td>
-        <td>{{formatDate this.created_date}}</td>
+        <td>{{formatPrice this.total_cost}} đ</td>
+        <td>{{formatDate this.created_at}}</td>
       </tr>
     {{/each}}
   </tbody>
 </table>
-
-<!-- Modal chi tiết nhập hàng -->
-<div
-  class="modal fade"
-  id="modal-import-detail"
-  tabindex="-1"
-  aria-labelledby="detailImportLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="detailImportLabel">Chi tiết nhập</h1>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <div id="import-detail-header" class="mb-3"></div>
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th>Tên sách</th>
-              <th>Số lượng</th>
-              <th>Giá nhập</th>
-              <th>Thành tiền</th>
-            </tr>
-          </thead>
-          <tbody id="import-detail-rows"></tbody>
-        </table>
-        <div class="text-end fw-bold">Tổng:
-          <span id="import-detail-total"></span></div>
-      </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >Đóng</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script src="/js/admin/imports_list.js"></script>

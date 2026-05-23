@@ -1,19 +1,19 @@
 const db = require("../../config/db.js");
+const { calculatePrice } = require("../../utils/price_calculator.js");
 
 const enrichBooks = (books = []) => {
   return books.map((book) => {
-    const avg = Number(book.avg_import_price || 0);
-    const profit = Number(book.profit_percentage || 0);
-    const discount = Number(book.discount_percentage || 0);
-
-    const original_price = Math.round(avg * (1 + profit / 100));
-    const selling_price = Math.round(original_price * (1 - discount / 100));
+    const { original_price, selling_price } = calculatePrice(
+      book.avg_import_price,
+      book.profit_percentage,
+      book.discount_percentage
+    );
 
     return {
       ...book,
       original_price,
       selling_price,
-      has_discount: discount > 0,
+      has_discount: Number(book.discount_percentage || 0) > 0,
     };
   });
 };

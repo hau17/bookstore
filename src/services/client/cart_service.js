@@ -1,15 +1,20 @@
 const db = require("../../config/db.js");
+const { calculatePrice } = require("../../utils/price_calculator.js");
+
 const calculatePrices = (books) => {
   books.forEach((book) => {
-    const avg = Number(book.avg_import_price || 0);
-    const profit = Number(book.profit_percentage || 0);
-    const discount = Number(book.discount_percentage || 0);
     const quantity = Number(book.quantity || 0);
+    const { original_price, selling_price } = calculatePrice(
+      book.avg_import_price,
+      book.profit_percentage,
+      book.discount_percentage
+    );
+    
     // Giá gốc trước khi giảm
-    book.original_price = Math.round(avg * (1 + profit / 100));
+    book.original_price = original_price;
 
     // Giá bán sau khi giảm
-    book.selling_price = Math.round(book.original_price * (1 - discount / 100));
+    book.selling_price = selling_price;
     // Tổng tiền cho số lượng
     book.itemTotal = book.selling_price * quantity;
   });
@@ -35,8 +40,10 @@ exports.getAllProducts = async (cus_id) => {
     const [products] = await db.query(sql, [cus_id]);
     calculatePrices(products);
     // Tính tổng tiền tất cả các mục trong giỏ hàng
-    const grandTotal = products.reduce((sum, book) => sum + book.itemTotal, 0);
-    return { products, grandTotal };
+    const grandTotal = Number(products.reduce((sum, book) => sum + book.itemTotal, 0));
+    const shippingFee = grandTotal >= 100000 ? 0 : 30000;
+    const finalTotal = grandTotal + shippingFee;
+    return { products, grandTotal, shippingFee, finalTotal };
   } catch (error) {
     console.error("Error fetching cart products:", error);
     throw new Error("Database fetch failed: " + error.message);

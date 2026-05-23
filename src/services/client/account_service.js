@@ -3,10 +3,11 @@ const bcrypt = require("bcrypt");
 
 exports.authenticateCustomer = async (username, password) => {
   const sql = `
-    SELECT cus_id, email, fullname, phone_number, password, status
-    FROM customers
+    SELECT user_id as cus_id, email, fullname, phone_number, password, status
+    FROM users
     WHERE (email = ?)
     AND status = 1
+    AND role = 'customer'
     LIMIT 1
   `;
   try {
@@ -46,7 +47,7 @@ exports.registerCustomer = async ({
 
     // Check if email exists
     const [existingEmail] = await db.query(
-      "SELECT cus_id FROM customers WHERE email = ? LIMIT 1",
+      "SELECT user_id FROM users WHERE email = ? LIMIT 1",
       [email]
     );
 
@@ -58,9 +59,9 @@ exports.registerCustomer = async ({
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const sql = `
-      INSERT INTO customers 
-      (fullname, phone_number, address, email, password)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO users 
+      (fullname, phone_number, address, email, password, role)
+      VALUES (?, ?, ?, ?, ?, 'customer')
     `;
     const [result] = await db.query(sql, [
       fullname,
@@ -88,9 +89,9 @@ exports.registerCustomer = async ({
 
 exports.getCustomerById = async (cus_id) => {
   const sql = `
-    SELECT cus_id, fullname, phone_number, address, email, created_at, status
-    FROM customers
-    WHERE cus_id = ?
+    SELECT user_id as cus_id, fullname, phone_number, address, email, created_at, status
+    FROM users
+    WHERE user_id = ? AND role = 'customer'
     LIMIT 1
   `;
   try {
@@ -111,7 +112,7 @@ exports.updateCustomer = async (
 ) => {
   // Check if email is already used by another customer
   const [existingEmail] = await db.query(
-    "SELECT cus_id FROM customers WHERE email = ? AND cus_id != ? LIMIT 1",
+    "SELECT user_id FROM users WHERE email = ? AND user_id != ? LIMIT 1",
     [email, cus_id]
   );
   if (existingEmail.length > 0) {
@@ -120,14 +121,14 @@ exports.updateCustomer = async (
 
   // Check if phone number is already used by another customer
   const [existingPhone] = await db.query(
-    "SELECT cus_id FROM customers WHERE phone_number = ? AND cus_id != ? LIMIT 1",
+    "SELECT user_id FROM users WHERE phone_number = ? AND user_id != ? LIMIT 1",
     [phone_number, cus_id]
   );
 
   const sql = `
-    UPDATE customers
+    UPDATE users
     SET fullname = ?, email = ?, phone_number = ?, address = ?
-    WHERE cus_id = ?
+    WHERE user_id = ? AND role = 'customer'
   `;
   try {
     const [result] = await db.query(sql, [
@@ -149,7 +150,7 @@ exports.updateCustomer = async (
 
 exports.changePassword = async (cus_id, { oldPassword, newPassword }) => {
   // Get current password
-  const sql = "SELECT password FROM customers WHERE cus_id = ? LIMIT 1";
+  const sql = "SELECT password FROM users WHERE user_id = ? AND role = 'customer' LIMIT 1";
   try {
     const [rows] = await db.query(sql, [cus_id]);
     if (rows.length === 0) {
@@ -166,7 +167,7 @@ exports.changePassword = async (cus_id, { oldPassword, newPassword }) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update password
-    const updateSql = "UPDATE customers SET password = ? WHERE cus_id = ?";
+    const updateSql = "UPDATE users SET password = ? WHERE user_id = ? AND role = 'customer'";
     await db.query(updateSql, [hashedPassword, cus_id]);
     return true;
   } catch (error) {

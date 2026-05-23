@@ -145,14 +145,18 @@
               <tr>
                 <td>Vận chuyển:</td>
                 <td class="text-end">
+                  {{#if (eq shippingFee 0)}}
                   <span class="badge bg-info">Miễn phí</span>
+                  {{else}}
+                  <strong>{{formatPrice shippingFee}}đ</strong>
+                  {{/if}}
                 </td>
               </tr>
               <tr class="border-top">
                 <td><strong>Tổng cộng:</strong></td>
                 <td class="text-end">
                   <strong class="text-danger fs-5">
-                    {{formatPrice grandTotal}}đ
+                    {{formatPrice finalTotal}}đ
                   </strong>
                 </td>
               </tr>
